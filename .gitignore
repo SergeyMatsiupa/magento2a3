@@ -1,0 +1,27 @@
+# Magento-specific ignores
+/var/*
+!/var/.htaccess
+!/var/session
+/var/session/*
+/pub/static/*
+!/pub/static/.htaccess
+/pub/media/*
+!/pub/media/.htaccess
+/generated/*
+/vendor/*
+!/vendor/magento/framework/View/Element/Template/File/Validator.php
+!/vendor/magento/framework/Image/Adapter/Gd2.php
+/app/etc/*
+!/app/etc/env.php
+!/app/etc/di.xml
+/.idea/*
+/.vscode/*
+/node_modules/*
+
+# General ignores
+*.log
+*.zip
+*.tar.gz
+
+# folder for save something locally for development purposes and not push to repository
+__work
