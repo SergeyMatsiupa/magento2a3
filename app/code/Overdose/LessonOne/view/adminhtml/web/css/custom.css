@@ -1,0 +1,41 @@
+.page-columns .main-col {
+    margin-left: 240px !important; /* Сдвигаем контент вправо, чтобы не перекрывался меню */
+    width: calc(100% - 240px) !important; /* Учитываем ширину меню */
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* Если меню свёрнуто, можно уменьшить отступ */
+.page-columns.menu-collapsed .main-col {
+    margin-left: 60px !important; /* Уменьшенный отступ для свёрнутого меню */
+    width: calc(100% - 60px) !important;
+}
+
+/* Стили для самой таблицы и сообщений остаются без изменений */
+.admin__data-grid-wrap {
+    margin-left: 0;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.admin__data-grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.data-grid th,
+.data-grid td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #d6d6d6;
+}
+
+.message-notice {
+    padding: 10px;
+    background: #fff8e5;
+    border: 1px solid #ffce67;
+    color: #333;
+}

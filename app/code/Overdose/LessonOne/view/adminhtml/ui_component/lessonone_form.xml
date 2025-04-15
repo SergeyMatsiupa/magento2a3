@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">lessonone_form.lessonone_form_data_source</item>
+            <item name="namespace" xsi:type="string">lessonone_form</item>
+            <item name="requestConfig" xsi:type="array">
+                <item name="url" xsi:type="url" path="mui/index/render"/>
+                <item name="params" xsi:type="array">
+                    <item name="namespace" xsi:type="string">lessonone_form</item>
+                </item>
+            </item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Lesson Information</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+        </item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="back" class="Overdose\LessonOne\Block\Adminhtml\Lesson\Edit\BackButton"/>
+            <button name="save" class="Overdose\LessonOne\Block\Adminhtml\Lesson\Edit\SaveButton"/>
+        </buttons>
+        <deps>
+            <dep>lessonone_form.lessonone_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="lessonone_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Overdose\LessonOne\Model\DataProvider</argument>
+            <argument name="name" xsi:type="string">lessonone_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">lesson_id</argument>
+            <argument name="requestFieldName" xsi:type="string">lesson_id</argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="lessonone/lesson/save"/>
+        </settings>
+    </dataSource>
+    <fieldset name="general">
+        <settings>
+            <label translate="true">Lesson Information</label>
+        </settings>
+        <field name="lesson_id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">ID</label>
+                <visible>false</visible>
+            </settings>
+        </field>
+        <field name="title" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Title</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="content" formElement="textarea">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Content</label>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+            </settings>
+        </field>
+        <field name="file" formElement="fileUploader">
+            <settings>
+                <dataType>file</dataType>
+                <label translate="true">Upload File</label>
+                <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
+                <allowedExtensions>csv traffic xls</allowedExtensions>
+                <uploaderConfig>
+                    <item name="url" xsi:type="url" path="lessonone/lesson/upload"/>
+                </uploaderConfig>
+                <notice translate="true">Only CSV, Traffic, and XLS files are allowed.</notice>
+            </settings>
+        </field>
+    </fieldset>
+</form>

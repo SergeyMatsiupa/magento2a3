@@ -1,0 +1,64 @@
+<?php
+/** @var \Overdose\LessonOne\Block\Adminhtml\LessonOne $block */
+?>
+
+<div class="admin__data-grid-wrap" data-role="grid-wrapper">
+    <div class="admin__data-grid-header">
+        <div class="admin__data-grid-header-row">
+            <div class="admin__data-grid-header-cell">
+                <h1><?= $block->escapeHtml(__('Lessons List')) ?></h1>
+            </div>
+            <div class="admin__data-grid-header-cell admin__control-support">
+                <?= $block->getChildHtml('add_lesson') ?>
+            </div>
+        </div>
+    </div>
+
+    <?php $collection = $block->getCollection(); ?>
+    <?php if ($collection->getSize() > 0): ?>
+        <table class="data-grid admin__table-primary" data-role="grid">
+            <thead>
+                <tr>
+                    <th class="data-grid-th"><?= $block->escapeHtml(__('ID')) ?></th>
+                    <th class="data-grid-th"><?= $block->escapeHtml(__('Title')) ?></th>
+                    <th class="data-grid-th"><?= $block->escapeHtml(__('Content')) ?></th>
+                    <th class="data-grid-th"><?= $block->escapeHtml(__('File Name')) ?></th>
+                    <th class="data-grid-th"><?= $block->escapeHtml(__('File Size (Bytes)')) ?></th>
+                    <th class="data-grid-th"><?= $block->escapeHtml(__('Actions')) ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($collection as $lesson): ?>
+                    <tr>
+                        <td><?= $block->escapeHtml($lesson->getId()) ?></td>
+                        <td><?= $block->escapeHtml($lesson->getTitle()) ?></td>
+                        <td><?= $block->escapeHtml($lesson->getContent()) ?></td>
+                        <td>
+                            <?php if ($lesson->getFilePath()): ?>
+                                <?= $block->escapeHtml($lesson->getFilePath()) ?>
+                            <?php else: ?>
+                                <?= $block->escapeHtml(__('No file')) ?>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if ($lesson->getFileSize()): ?>
+                                <?= $block->escapeHtml($lesson->getFileSize()) ?>
+                            <?php else: ?>
+                                <?= $block->escapeHtml(__('N/A')) ?>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <a href="<?= $block->getUrl('lessonone/lesson/edit', ['id' => $lesson->getId()]) ?>">
+                                <?= $block->escapeHtml(__('Edit')) ?>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <div class="message message-notice">
+            <p><?= $block->escapeHtml(__('No lessons found.')) ?></p>
+        </div>
+    <?php endif; ?>
+</div>

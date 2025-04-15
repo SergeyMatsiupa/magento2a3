@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Overdose_LessonOne::lessonone" title="Lesson One" module="Overdose_LessonOne" sortOrder="10" resource="Overdose_LessonOne::lessonone"/>
+        <add id="Overdose_LessonOne::lessonone_lesson" title="Lessons" module="Overdose_LessonOne" sortOrder="10" parent="Overdose_LessonOne::lessonone" action="lessonone/lesson/index" resource="Overdose_LessonOne::lessonone"/>
+    </menu>
+</config>

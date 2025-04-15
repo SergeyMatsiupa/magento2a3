@@ -1,0 +1,12 @@
+{
+    "name": "overdose/lessonone",
+    "description": "Lesson One Module",
+    "type": "magento2-module",
+    "version": "1.0.1",
+    "autoload": {
+        "files": ["registration.php"],
+        "psr-4": {
+            "Overdose\\LessonOne\\": ""
+        }
+    }
+}
