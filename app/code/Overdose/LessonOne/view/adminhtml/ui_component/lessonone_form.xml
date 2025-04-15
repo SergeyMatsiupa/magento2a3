@@ -76,11 +76,9 @@
                 <dataType>file</dataType>
                 <label translate="true">Upload File</label>
                 <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
-                <allowedExtensions>csv traffic xls</allowedExtensions>
                 <uploaderConfig>
                     <item name="url" xsi:type="url" path="lessonone/lesson/upload"/>
                 </uploaderConfig>
-                <notice translate="true">Only CSV, Traffic, and XLS files are allowed.</notice>
             </settings>
         </field>
     </fieldset>
