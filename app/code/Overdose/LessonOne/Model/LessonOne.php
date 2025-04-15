@@ -92,24 +92,4 @@ class LessonOne extends AbstractModel
         return $this->setData('file_size', $fileSize);
     }
 
-    /**
-     * Get file name
-     *
-     * @return string|null
-     */
-    public function getFileName()
-    {
-        return $this->getData('file_name');
-    }
-
-    /**
-     * Set file name
-     *
-     * @param string $fileName
-     * @return $this
-     */
-    public function setFileName($fileName)
-    {
-        return $this->setData('file_name', $fileName);
-    }
 }

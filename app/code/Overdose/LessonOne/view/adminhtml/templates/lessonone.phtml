@@ -34,8 +34,8 @@
                         <td><?= $block->escapeHtml($lesson->getTitle()) ?></td>
                         <td><?= $block->escapeHtml($lesson->getContent()) ?></td>
                         <td>
-                            <?php if ($lesson->getFilePath()): ?>
-                                <?= $block->escapeHtml($lesson->getFilePath()) ?>
+                            <?php if ($lesson->getFileName()): ?>
+                                <?= $block->escapeHtml($lesson->getFileName()) ?>
                             <?php else: ?>
                                 <?= $block->escapeHtml(__('No file')) ?>
                             <?php endif; ?>
@@ -48,7 +48,7 @@
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="<?= $block->getUrl('lessonone/lesson/edit', ['id' => $lesson->getId()]) ?>">
+                            <a href="<?= $block->getUrl('lessonone/lesson/edit', ['lesson_id' => $lesson->getId()]) ?>">
                                 <?= $block->escapeHtml(__('Edit')) ?>
                             </a>
                         </td>
