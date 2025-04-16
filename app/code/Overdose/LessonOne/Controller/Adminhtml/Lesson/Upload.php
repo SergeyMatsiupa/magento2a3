@@ -59,16 +59,21 @@ class Upload extends Action
                 throw new \Exception('File upload failed or invalid result.');
             }
 
+            // Normalize path for Windows compatibility
+            $filePath = realpath($destination . '/' . $result['file']);
+            if (!$filePath) {
+                throw new \Exception('Failed to get real path for uploaded file.');
+            }
             // Format response for fileUploader and Save.php
             $response = [
                 'name' => $result['file'],
-                'size' => (int) $result['size'], // Ensure size is an integer
-                'url' => $destination . '/' . $result['file'],
+                'size' => (int) filesize($filePath), // Get size from file system
+                'url' => str_replace('\\', '/', $filePath), // Normalize slashes for compatibility
                 'file' => $result['file'], // For Save.php
-                'path' => $destination . '/' . $result['file'], // For Save.php
+                'path' => str_replace('\\', '/', $filePath), // For Save.php
                 'error' => 0,
                 'previewType' => 'document', // For compatibility with fileUploader
-                'previewUrl' => $destination . '/' . $result['file'], // For preview
+                'previewUrl' => str_replace('\\', '/', $filePath), // For preview
                 'type' => $uploader->getFileMimeType() ?? 'application/octet-stream' // MIME type for preview
             ];
             $this->logger->debug('Upload successful: ' . json_encode($response));

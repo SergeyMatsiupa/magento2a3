@@ -58,7 +58,7 @@ class LessonOne extends AbstractDb
             $table = $this->getMainTable();
             $data = $object->getData();
 
-            // Prepare data for insert
+            // Prepare data for insert/update
             $insertData = [
                 'title' => $data['title'] ?? '',
                 'content' => $data['content'] ?? '',
@@ -88,5 +88,18 @@ class LessonOne extends AbstractDb
             $this->logger->error('ResourceModel LessonOne save failed: ' . $e->getMessage());
             throw $e;
         }
+    }
+
+    /**
+     * Load collection data
+     *
+     * @param \Magento\Framework\Data\Collection $collection
+     * @param \Magento\Framework\DB\Select $select
+     * @return $this
+     */
+    protected function _afterLoad(\Magento\Framework\Data\Collection $collection, $select)
+    {
+        $this->logger->debug('ResourceModel LessonOne _afterLoad called with collection size: ' . $collection->getSize());
+        return parent::_afterLoad($collection, $select);
     }
 }
