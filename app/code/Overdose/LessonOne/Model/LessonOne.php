@@ -51,6 +51,27 @@ class LessonOne extends AbstractModel
     }
 
     /**
+     * Validate before saving
+     *
+     * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function beforeSave()
+    {
+        $this->logger->debug('LessonOne beforeSave called with data: ' . json_encode($this->getData()));
+
+        // Validate required fields
+        if (empty($this->getTitle())) {
+            throw new \Magento\Framework\Exception\LocalizedException(__('Title is required.'));
+        }
+        if (empty($this->getContent())) {
+            throw new \Magento\Framework\Exception\LocalizedException(__('Content is required.'));
+        }
+
+        return parent::beforeSave();
+    }
+
+    /**
      * Save the model to the database
      *
      * @return $this

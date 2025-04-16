@@ -64,11 +64,11 @@ class Save extends Action
             }
             $model = $this->lessonOneFactory->create();
 
-            // Process file data from Upload.php response
-            if (isset($data['file']) && is_array($data['file']) && !empty($data['file'][0]['file'])) {
+            // Process file data from fileUploader response
+            if (isset($data['file']) && is_array($data['file']) && !empty($data['file'][0]['name'])) {
                 $fileData = $data['file'][0];
-                $data['file_name'] = $fileData['file']; // File name
-                $data['file_size'] = $fileData['size']; // File size in bytes
+                $data['file_name'] = $fileData['name']; // File name
+                $data['file_size'] = isset($fileData['size']) ? $fileData['size'] : 0; // File size in bytes
                 $this->logger->debug('File data processed: ' . json_encode($fileData));
             } else {
                 unset($data['file']); // Remove file field if no file was uploaded
