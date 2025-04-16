@@ -64,10 +64,15 @@ class Upload extends Action
             if (!$filePath) {
                 throw new \Exception('Failed to get real path for uploaded file.');
             }
+            // Get file size directly from the file system
+            $fileSize = filesize($filePath);
+            if ($fileSize === false) {
+                throw new \Exception('Failed to get file size.');
+            }
             // Format response for fileUploader and Save.php
             $response = [
                 'name' => $result['file'],
-                'size' => (int) filesize($filePath), // Ensure size is an integer from file system
+                'size' => (int) $fileSize, // Explicitly cast size to integer
                 'url' => str_replace('\\', '/', $filePath), // Normalize slashes for compatibility
                 'file' => $result['file'], // For Save.php
                 'path' => str_replace('\\', '/', $filePath), // For Save.php
