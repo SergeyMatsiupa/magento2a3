@@ -72,13 +72,15 @@
             </settings>
         </field>
         <field name="file" formElement="fileUploader">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Overdose_LessonOne/js/file-uploader</item>
+                </item>
+            </argument>
             <settings>
                 <dataType>file</dataType>
                 <label translate="true">Upload File</label>
                 <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
-                <uploaderConfig>
-                    <item name="url" xsi:type="url" path="lessonone/lesson/upload"/>
-                </uploaderConfig>
             </settings>
         </field>
     </fieldset>
