@@ -67,7 +67,7 @@ class Upload extends Action
             // Format response for fileUploader and Save.php
             $response = [
                 'name' => $result['file'],
-                'size' => (int) filesize($filePath), // Get size from file system
+                'size' => (int) filesize($filePath), // Ensure size is an integer from file system
                 'url' => str_replace('\\', '/', $filePath), // Normalize slashes for compatibility
                 'file' => $result['file'], // For Save.php
                 'path' => str_replace('\\', '/', $filePath), // For Save.php
@@ -116,4 +116,4 @@ class Upload extends Action
     {
         return $this->_authorization->isAllowed('Overdose_LessonOne::lessonone_lesson');
     }
-}
+}	

@@ -76,6 +76,9 @@
                 <dataType>file</dataType>
                 <label translate="true">Upload File</label>
                 <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
+                <uploaderConfig>
+                    <param name="url" xsi:type="url" path="lessonone/lesson/upload"/>
+                </uploaderConfig>
             </settings>
         </field>
     </fieldset>
