@@ -89,17 +89,4 @@ class LessonOne extends AbstractDb
             throw $e;
         }
     }
-
-    /**
-     * Load collection data
-     *
-     * @param \Magento\Framework\Data\Collection $collection
-     * @param \Magento\Framework\DB\Select $select
-     * @return $this
-     */
-    protected function _afterLoad(\Magento\Framework\Data\Collection $collection, $select)
-    {
-        $this->logger->debug('ResourceModel LessonOne _afterLoad called with collection size: ' . $collection->getSize());
-        return parent::_afterLoad($collection, $select);
-    }
 }
