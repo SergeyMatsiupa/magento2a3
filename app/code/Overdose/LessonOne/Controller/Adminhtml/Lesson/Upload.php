@@ -62,11 +62,14 @@ class Upload extends Action
             // Format response for fileUploader and Save.php
             $response = [
                 'name' => $result['file'],
-                'size' => $result['size'],
+                'size' => (int) $result['size'], // Ensure size is an integer
                 'url' => $destination . '/' . $result['file'],
                 'file' => $result['file'], // For Save.php
                 'path' => $destination . '/' . $result['file'], // For Save.php
-                'error' => 0
+                'error' => 0,
+                'previewType' => 'document', // For compatibility with fileUploader
+                'previewUrl' => $destination . '/' . $result['file'], // For preview
+                'type' => $result['type'] ?? 'application/octet-stream' // MIME type for preview
             ];
             $this->logger->debug('Upload successful: ' . json_encode($response));
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
