@@ -53,13 +53,36 @@ class LessonOne extends AbstractDb
     public function save(\Magento\Framework\Model\AbstractModel $object)
     {
         $this->logger->debug('ResourceModel LessonOne save called with data: ' . json_encode($object->getData()));
+        $connection = $this->getConnection();
         try {
-            $result = parent::save($object);
-            $id = $object->getId();
-            if (!$id) {
+            $table = $this->getMainTable();
+            $data = $object->getData();
+
+            // Prepare data for insert
+            $insertData = [
+                'title' => $data['title'] ?? '',
+                'content' => $data['content'] ?? '',
+                'file_name' => $data['file_name'] ?? null,
+                'file_size' => $data['file_size'] ?? null
+            ];
+
+            if (!$object->getId()) {
+                // Insert new record
+                $connection->insert($table, $insertData);
+                $object->setId($connection->lastInsertId($table));
+                $this->logger->debug('Inserted new record with ID: ' . $object->getId());
+            } else {
+                // Update existing record
+                $where = $connection->quoteInto('lesson_id = ?', $object->getId());
+                $connection->update($table, $insertData, $where);
+                $this->logger->debug('Updated record with ID: ' . $object->getId());
+            }
+
+            $result = $object;
+            if (!$object->getId()) {
                 throw new \Exception('Failed to save lesson: No ID returned after save.');
             }
-            $this->logger->debug('ResourceModel LessonOne saved with ID: ' . $id);
+            $this->logger->debug('ResourceModel LessonOne saved with ID: ' . $object->getId());
             return $result;
         } catch (\Exception $e) {
             $this->logger->error('ResourceModel LessonOne save failed: ' . $e->getMessage());

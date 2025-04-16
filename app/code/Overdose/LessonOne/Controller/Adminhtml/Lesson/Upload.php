@@ -55,8 +55,8 @@ class Upload extends Action
             $destination = $this->_getFilePath();
             $result = $uploader->save($destination);
 
-            if (!$result) {
-                throw new \Exception('File upload failed.');
+            if (!$result || !isset($result['file']) || !isset($result['size'])) {
+                throw new \Exception('File upload failed or invalid result.');
             }
 
             // Format response for fileUploader and Save.php
@@ -69,7 +69,7 @@ class Upload extends Action
                 'error' => 0,
                 'previewType' => 'document', // For compatibility with fileUploader
                 'previewUrl' => $destination . '/' . $result['file'], // For preview
-                'type' => $result['type'] ?? 'application/octet-stream' // MIME type for preview
+                'type' => $uploader->getFileMimeType() ?? 'application/octet-stream' // MIME type for preview
             ];
             $this->logger->debug('Upload successful: ' . json_encode($response));
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
