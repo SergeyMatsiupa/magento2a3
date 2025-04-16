@@ -5,7 +5,13 @@ namespace Overdose\LessonOne\Controller\Adminhtml\Lesson;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Overdose\LessonOne\Model\LessonOneFactory;
+use Psr\Log\LoggerInterface;
 
+/**
+ * Class Save
+ *
+ * Controller for saving lesson data
+ */
 class Save extends Action
 {
     /**
@@ -14,19 +20,27 @@ class Save extends Action
     protected $lessonOneFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Constructor
      *
      * @param Context $context
      * @param LessonOneFactory $lessonOneFactory
+     * @param LoggerInterface $logger
      */
     public function __construct(
         Context $context,
-        LessonOneFactory $lessonOneFactory
+        LessonOneFactory $lessonOneFactory,
+        LoggerInterface $logger
     ) {
         // Call parent constructor to initialize the context
         parent::__construct($context);
         // Assign LessonOneFactory to class property
         $this->lessonOneFactory = $lessonOneFactory;
+        $this->logger = $logger;
     }
 
     /**
@@ -42,17 +56,23 @@ class Save extends Action
         $resultRedirect = $this->resultRedirectFactory->create();
 
         try {
-            // Create a new LessonOne model instance
+            // Log the incoming data for debugging
+            $this->logger->debug('Save.php received data: ' . json_encode($data));
+
+            if (empty($data)) {
+                throw new \Exception('No data received to save.');
+            }
             $model = $this->lessonOneFactory->create();
 
-            // Process the file uploaded through Upload.php
+            // Process file data from Upload.php response
             if (isset($data['file']) && is_array($data['file']) && !empty($data['file'][0]['file'])) {
                 $fileData = $data['file'][0];
                 $data['file_name'] = $fileData['file']; // File name
-                $data['file_size'] = $fileData['size']; // File size
-                $data['file_path'] = $fileData['path']; // File path
+                $data['file_size'] = $fileData['size']; // File size in bytes
+                $this->logger->debug('File data processed: ' . json_encode($fileData));
             } else {
-                unset($data['file']); // If the file is not uploaded, remove the field
+                unset($data['file']); // Remove file field if no file was uploaded
+                $this->logger->debug('No file data received.');
             }
 
             // Set data to the model from POST request
@@ -64,7 +84,7 @@ class Save extends Action
             // Set redirect path to the lesson index page
             $resultRedirect->setPath('lessonone/lesson/index');
         } catch (\Exception $e) {
-            // Add error message if something goes wrong
+            $this->logger->error('Error saving lesson: ' . $e->getMessage());
             $this->messageManager->addErrorMessage(__('Something went wrong while saving the lesson: %1', $e->getMessage()));
             // Set redirect path back to the edit page
             $resultRedirect->setPath('lessonone/lesson/edit');
@@ -75,7 +95,7 @@ class Save extends Action
     }
 
     /**
-     * Authorization
+     * Check if action is allowed
      *
      * @return bool
      */

@@ -4,7 +4,13 @@ namespace Overdose\LessonOne\Controller\Adminhtml\Lesson;
 use Magento\Backend\App\Action;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\File\UploaderFactory;
+use Psr\Log\LoggerInterface;
 
+/**
+ * Class Upload
+ *
+ * Controller for handling file uploads
+ */
 class Upload extends Action
 {
     /**
@@ -13,17 +19,25 @@ class Upload extends Action
     protected $uploaderFactory;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Constructor
      *
      * @param \Magento\Backend\App\Action\Context $context
      * @param UploaderFactory $uploaderFactory
+     * @param LoggerInterface $logger
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        UploaderFactory $uploaderFactory
+        UploaderFactory $uploaderFactory,
+        LoggerInterface $logger
     ) {
         parent::__construct($context);
         $this->uploaderFactory = $uploaderFactory;
+        $this->logger = $logger;
     }
 
     /**
@@ -34,6 +48,7 @@ class Upload extends Action
     public function execute()
     {
         try {
+            $this->logger->debug('Upload.php called with fileId: file');
             $uploader = $this->uploaderFactory->create(['fileId' => 'file']);
             $uploader->setAllowedExtensions(['csv', 'xls', 'traffic']);
             $uploader->setAllowRenameFiles(true);
@@ -50,10 +65,12 @@ class Upload extends Action
                 'size' => $result['size'],
                 'path' => $destination . '/' . $result['file']
             ];
+            $this->logger->debug('Upload successful: ' . json_encode($response));
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
             $resultJson->setData($response);
             return $resultJson;
         } catch (\Exception $e) {
+            $this->logger->error('Upload error: ' . $e->getMessage());
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
             $resultJson->setData(['error' => $e->getMessage()]);
             return $resultJson;
@@ -77,7 +94,7 @@ class Upload extends Action
     }
 
     /**
-     * Authorization
+     * Check if action is allowed
      *
      * @return bool
      */
