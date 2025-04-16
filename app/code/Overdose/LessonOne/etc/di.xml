@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\MediaStorage\Model\File\Uploader">
+        <arguments>
+            <argument name="baseTmpPath" xsi:type="string">lessonone/files</argument>
+            <argument name="basePath" xsi:type="string">lessonone/files</argument>
+            <argument name="allowedExtensions" xsi:type="array">
+                <item name="csv" xsi:type="string">csv</item>
+                <item name="xls" xsi:type="string">xls</item>
+                <item name="traffic" xsi:type="string">traffic</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

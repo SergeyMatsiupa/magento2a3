@@ -59,11 +59,12 @@ class Upload extends Action
                 throw new \Exception('File upload failed.');
             }
 
-            // Include file name in response
+            // Format response for fileUploader
             $response = [
-                'file' => $result['file'], // Original file name after upload
+                'name' => $result['file'],
                 'size' => $result['size'],
-                'path' => $destination . '/' . $result['file']
+                'url' => $destination . '/' . $result['file'],
+                'error' => 0
             ];
             $this->logger->debug('Upload successful: ' . json_encode($response));
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
@@ -72,7 +73,10 @@ class Upload extends Action
         } catch (\Exception $e) {
             $this->logger->error('Upload error: ' . $e->getMessage());
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-            $resultJson->setData(['error' => $e->getMessage()]);
+            $resultJson->setData([
+                'error' => $e->getMessage(),
+                'errorcode' => $e->getCode()
+            ]);
             return $resultJson;
         }
     }

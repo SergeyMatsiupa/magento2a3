@@ -3,16 +3,70 @@
 namespace Overdose\LessonOne\Model;
 
 use Magento\Framework\Model\AbstractModel;
+use Psr\Log\LoggerInterface;
 
+/**
+ * Class LessonOne
+ *
+ * Model for lesson entity
+ */
 class LessonOne extends AbstractModel
 {
     /**
-     * Define resource model
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * Constructor
+     *
+     * @param \Magento\Framework\Model\Context $context
+     * @param \Magento\Framework\Registry $registry
+     * @param LoggerInterface $logger
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
+     * @param array $data
+     */
+    public function __construct(
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        LoggerInterface $logger,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        $this->logger = $logger;
+        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+    }
+
+    /**
+     * Initialize resource model
+     *
+     * @return void
      */
     protected function _construct()
     {
         // Initialize the resource model for this entity
         $this->_init(\Overdose\LessonOne\Model\ResourceModel\LessonOne::class);
+    }
+
+    /**
+     * Save the model to the database
+     *
+     * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function save()
+    {
+        $this->logger->debug('LessonOne save called with data: ' . json_encode($this->getData()));
+        try {
+            $result = parent::save();
+            $this->logger->debug('LessonOne saved successfully with ID: ' . $this->getId());
+            return $result;
+        } catch (\Exception $e) {
+            $this->logger->error('LessonOne save failed: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -61,18 +115,29 @@ class LessonOne extends AbstractModel
         return $this->setData('content', $content);
     }
 
+    /**
+     * Get uploaded file name
+     *
+     * @return string|null
+     */
     public function getFileName()
     {
         return $this->getData('file_name');
     }
 
+    /**
+     * Set uploaded file name
+     *
+     * @param string $fileName
+     * @return $this
+     */
     public function setFileName($fileName)
     {
         return $this->setData('file_name', $fileName);
     }
 
     /**
-     * Get file size
+     * Get uploaded file size
      *
      * @return int|null
      */
@@ -82,9 +147,9 @@ class LessonOne extends AbstractModel
     }
 
     /**
-     * Set file size
+     * Set uploaded file size
      *
-     * @param int $size
+     * @param int $fileSize
      * @return $this
      */
     public function setFileSize($fileSize)
