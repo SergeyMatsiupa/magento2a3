@@ -59,12 +59,13 @@ class Upload extends Action
                 throw new \Exception('File upload failed.');
             }
 
-            // Format response for Save.php
+            // Format response for fileUploader and Save.php
             $response = [
-                'file' => $result['file'],
+                'name' => $result['file'],
                 'size' => $result['size'],
-                'path' => $destination . '/' . $result['file'],
-                'name' => $result['file'], // For compatibility with fileUploader
+                'url' => $destination . '/' . $result['file'],
+                'file' => $result['file'], // For Save.php
+                'path' => $destination . '/' . $result['file'], // For Save.php
                 'error' => 0
             ];
             $this->logger->debug('Upload successful: ' . json_encode($response));

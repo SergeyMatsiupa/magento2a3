@@ -82,7 +82,11 @@ class LessonOne extends AbstractModel
         $this->logger->debug('LessonOne save called with data: ' . json_encode($this->getData()));
         try {
             $result = parent::save();
-            $this->logger->debug('LessonOne saved successfully with ID: ' . $this->getId());
+            $id = $this->getId();
+            if (!$id) {
+                throw new \Magento\Framework\Exception\LocalizedException(__('Failed to save lesson: No ID returned after save.'));
+            }
+            $this->logger->debug('LessonOne saved successfully with ID: ' . $id);
             return $result;
         } catch (\Exception $e) {
             $this->logger->error('LessonOne save failed: ' . $e->getMessage());

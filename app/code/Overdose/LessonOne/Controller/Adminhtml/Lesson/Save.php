@@ -75,6 +75,10 @@ class Save extends Action
                 $this->logger->debug('No file data received.');
             }
 
+            // Remove form_key from data to avoid saving it in the database
+            if (isset($data['form_key'])) {
+                unset($data['form_key']);
+            }
             // Set data to the model from POST request
             $model->setData($data);
             // Save the model to the database
