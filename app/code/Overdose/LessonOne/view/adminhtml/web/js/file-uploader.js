@@ -15,14 +15,10 @@ define([
             this._super();
 
             console.log('Custom file-uploader initialized');
+            console.log('Uploader Config:', this.uploaderConfig);
 
-            // Ensure uploaderConfig is initialized
-            if (!this.uploaderConfig) {
-                this.uploaderConfig = {};
-            }
-
-            // Set custom upload URL
-            this.uploaderConfig.url = this.getUploadUrl();
+            // Ensure uploaderConfig is applied
+            this.uploaderConfig.url = this.uploaderConfig.url || this.getUploadUrl();
             console.log('Upload URL set to: ' + this.uploaderConfig.url);
 
             // Add event listeners for upload events

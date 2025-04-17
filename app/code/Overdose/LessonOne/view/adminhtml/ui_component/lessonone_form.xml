@@ -77,6 +77,10 @@
                     <item name="component" xsi:type="string">Overdose_LessonOne/js/file-uploader</item>
                     <item name="allowedExtensions" xsi:type="string">csv xls traffic</item>
                     <item name="maxFileSize" xsi:type="number">10485760</item> <!-- 10MB -->
+                    <item name="isMultipleFiles" xsi:type="boolean">false</item>
+                    <item name="uploaderConfig" xsi:type="array">
+                        <item name="url" xsi:type="string">lessonone/lesson/upload</item>
+                    </item>
                 </item>
             </argument>
             <settings>

@@ -3,9 +3,15 @@
 namespace Overdose\LessonOne\Block\Adminhtml;
 
 use Magento\Backend\Block\Template;
+use Magento\Backend\Block\Template\Context;
 use Overdose\LessonOne\Model\ResourceModel\LessonOne\CollectionFactory;
 use Overdose\LessonOne\Model\Logger;  // Добавляем зависимость
 
+/**
+ * Class LessonOne
+ *
+ * Block for displaying lesson one list
+ */
 class LessonOne extends Template
 {
 
@@ -27,22 +33,15 @@ class LessonOne extends Template
     /**
      * Constructor
      *
-     * @param \Magento\Backend\Block\Template\Context $context
+     * @param Context $context
      * @param CollectionFactory $collectionFactory  // Фабрика из нашего модуля
-     * @param Logger $logger  // Добавляем Logger через DI
      * @param array $data
      */
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
+        Context $context,
         CollectionFactory $collectionFactory,
-        Logger $logger,  // Magento сам создаст и передаст объект Logger
         array $data = []
     ) {
-
-        // echo "Constructor called, collection is not created yet.\n";
-        // Assign Logger to class property
-        $this->logger = $logger;
-        // Assign CollectionFactory to class property
         $this->collectionFactory = $collectionFactory;
         // Здесь коллекция НЕ создаётся, только фабрика передана
         // Call parent constructor to initialize the block
@@ -57,49 +56,23 @@ class LessonOne extends Template
      */
     public function getCollection()
     {
-        // Create and return the lesson collection
-        // Log when collection is fetched
-        $this->logger->log(\Psr\Log\LogLevel::INFO, "Collection fetched at " . date('Y-m-d H:i:s'));
-        // Lazy loading: создаём коллекцию только при первом вызове
-        if ($this->lessonCollection === null) {
-            // echo "Lazy loading: creating collection now.\n";
-            $this->lessonCollection = $this->collectionFactory->create();   // Создаём коллекцию через фабрику
+        // !msv
+        // // Create and return the lesson collection
+        // // Log when collection is fetched
+        // $this->logger->log(\Psr\Log\LogLevel::INFO, "Collection fetched at " . date('Y-m-d H:i:s'));
+        // // Lazy loading: создаём коллекцию только при первом вызове
+        // if ($this->lessonCollection === null) {
+        //     // echo "Lazy loading: creating collection now.\n";
+        //     $this->lessonCollection = $this->collectionFactory->create();   // Создаём коллекцию через фабрику
+        // }
+        // return $this->lessonCollection;
+
+        $collection = $this->collectionFactory->create();
+        $collection->load();
+        $this->_logger->debug('Collection size after load: ' . $collection->getSize());
+        foreach ($collection as $item) {
+            $this->_logger->debug('Collection item: ' . json_encode($item->getData()));
         }
-        return $this->lessonCollection;
+        return $collection;
     }
-
-    /**
-     * Add button to toolbar
-     * @param string $buttonId
-     * @param array $buttonData
-     * @return void
-     */
-    public function addButton($buttonId, $buttonData)
-    {
-        $childBlock = $this->getLayout()->createBlock(\Magento\Backend\Block\Widget\Button::class);
-        $childBlock->setData($buttonData);
-        $childBlock->setId($buttonId);
-        $this->setChild($buttonId, $childBlock);
-    }
-
-    /**
-     * Prepare layout
-     * @return $this
-     */
-    protected function _prepareLayout()
-    {
-        parent::_prepareLayout();
-
-        // Add "Add Lesson" button
-        $this->addButton('add_lesson', [
-            'label' => __('Add Lesson'),
-            'onclick' => "setLocation('" . $this->getUrl('lessonone/lesson/edit') . "')",
-            'class' => 'primary'
-        ]);
-
-        return $this;
-    }
-
-
-
 }
