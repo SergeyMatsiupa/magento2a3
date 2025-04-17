@@ -64,9 +64,9 @@ class Save extends Action implements HttpPostActionInterface
             $this->logger->debug('Save.php received data: ' . json_encode($data));
 
         // Check for file data
-        $fileData = $this->getRequest()->getParam('file', []);
-        if (!empty($fileData) && is_array($fileData) && !empty($fileData[0])) {
-            $fileInfo = $fileData[0];
+        $fileData = isset($data['file']) && is_array($data['file']) && !empty($data['file']) ? $data['file'] : [];
+        if (!empty($fileData)) {
+            $fileInfo = $fileData[0]; // fileUploader sends an array of files
             $data['file_name'] = $fileInfo['file'] ?? null;
             $data['file_size'] = $fileInfo['size'] ?? null;
             $this->logger->debug('File data received: ' . json_encode($fileInfo));
