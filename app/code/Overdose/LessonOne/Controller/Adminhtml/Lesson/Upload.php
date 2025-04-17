@@ -47,6 +47,8 @@ class Upload extends Action
      */
     public function execute()
     {
+        $this->logger->debug('Upload.php: Request received. Parameters: ' . json_encode($this->getRequest()->getParams()));
+        $this->logger->debug('Upload.php: Files received: ' . json_encode($_FILES));
         try {
             $this->logger->debug('Upload.php called with fileId: file');
             $uploader = $this->uploaderFactory->create(['fileId' => 'file']);
@@ -121,4 +123,4 @@ class Upload extends Action
     {
         return $this->_authorization->isAllowed('Overdose_LessonOne::lessonone_lesson');
     }
-}	
+}

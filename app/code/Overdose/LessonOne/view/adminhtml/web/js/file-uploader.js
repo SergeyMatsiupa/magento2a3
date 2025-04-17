@@ -2,8 +2,9 @@ define([
     'jquery',
     'Magento_Ui/js/form/element/file-uploader',
     'mage/translate',
-    'mage/url'
-], function ($, FileUploader, $t, urlBuilder) {
+    'mage/url',
+    'Magento_Ui/js/modal/alert' // Используем для уведомлений
+], function ($, FileUploader, $t, urlBuilder, alert) {
     'use strict';
 
     return FileUploader.extend({
@@ -14,7 +15,6 @@ define([
          */
         initialize: function () {
             this._super();
-
             console.log('Custom file-uploader initialized');
 
             // Ensure uploaderConfig is initialized
@@ -76,7 +76,10 @@ define([
          * @param {String} message
          */
         notifySuccess: function (message) {
-            this.addMessage('success', message);
+            alert({
+                title: $t('Success'),
+                content: message
+            });
         },
 
         /**
@@ -85,21 +88,9 @@ define([
          * @param {String} message
          */
         notifyError: function (message) {
-            this.addMessage('error', message);
-        },
-
-        /**
-         * Add message to the notification area
-         *
-         * @param {String} type
-         * @param {String} message
-         */
-        addMessage: function (type, message) {
-            require(['Magento_Ui/js/lib/notification'], function (notification) {
-                notification().add({
-                    message: message,
-                    messageType: type
-                });
+            alert({
+                title: $t('Error'),
+                content: message
             });
         }
     });
