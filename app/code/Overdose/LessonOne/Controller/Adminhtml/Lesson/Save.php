@@ -48,6 +48,7 @@ class Save extends Action implements HttpPostActionInterface
         parent::__construct($context);
         // Assign LessonOneFactory to class property
         $this->lessonOneFactory = $lessonOneFactory;
+        $this->lessonOneResource = $lessonOneResource;
         $this->logger = $logger;
     }
 
@@ -76,6 +77,9 @@ class Save extends Action implements HttpPostActionInterface
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 
         try {
+            if (!$this->lessonOneResource) {
+                throw new \Exception('LessonOneResource is null.');
+            }
             $lesson = $this->lessonOneFactory->create();
             $this->logger->debug('LessonOne save called with data: ' . json_encode($data));
             $lesson->setData($data);

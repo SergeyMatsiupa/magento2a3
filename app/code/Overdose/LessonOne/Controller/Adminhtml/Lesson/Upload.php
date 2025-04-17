@@ -78,12 +78,13 @@ class Upload extends Action
             }
             // Format response to match fileUploader expectations
             $response = [
-                'file' => $result['file'], // Name of the uploaded file
-                'size' => (int) $fileSize, // File size in bytes
-                'name' => $result['file'], // File name for display
-                'url' => str_replace('\\', '/', $filePath), // File path (normalized)
-                'type' => $uploader->getFileMimeType() ?? 'application/octet-stream', // MIME type
-                'error' => 0 // No error
+                'name' => $result['file'],
+                'size' => (int) $fileSize,
+                'file' => $result['file'],
+                'url' => str_replace('\\', '/', $filePath),
+                'type' => $uploader->getFileMimeType() ?? 'application/octet-stream',
+                'error' => false,
+                'message' => 'File uploaded successfully'
             ];
             $this->logger->debug('Upload successful. Response: ' . json_encode($response));
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
@@ -93,8 +94,8 @@ class Upload extends Action
             $this->logger->error('Upload error: ' . $e->getMessage());
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
             $resultJson->setData([
-                'error' => $e->getMessage(),
-                'errorcode' => $e->getCode()
+                'error' => true,
+                'message' => $e->getMessage()
             ]);
             return $resultJson;
         }
