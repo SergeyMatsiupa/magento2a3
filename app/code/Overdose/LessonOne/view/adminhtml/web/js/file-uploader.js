@@ -30,9 +30,12 @@ define([
             this.on('beforeFileUpload', this.onBeforeFileUpload.bind(this));
             this.on('fileUploaded', this.onFileUploaded.bind(this));
             this.on('fileUploadError', this.onFileUploadError.bind(this));
+            this.on('upload', this.onUpload.bind(this));
 
-            // Log uploaderConfig for debugging
+            // Log uploaderConfig and initial state
             console.log('Uploader config: ', JSON.stringify(this.uploaderConfig));
+            console.log('Initial value: ', JSON.stringify(this.value()));
+            console.log('Element name: ', this.name);
 
             return this;
         },
@@ -45,6 +48,16 @@ define([
          */
         onBeforeFileUpload: function (event, data) {
             console.log('Before file upload: ', JSON.stringify(data));
+        },
+
+        /**
+         * Debug upload event
+         *
+         * @param {Object} event
+         * @param {Object} data
+         */
+        onUpload: function (event, data) {
+            console.log('Upload event triggered: ', JSON.stringify(data));
         },
 
         /**
@@ -74,10 +87,10 @@ define([
                     name: data.name || data.file,
                     file: data.file,
                     size: data.size,
-                    path: data.path || '', // Changed to path to match response
+                    path: data.path || '',
                     type: data.type || 'application/octet-stream'
                 };
-                this.value([fileData]); // fileUploader expects an array
+                this.value([fileData]);
                 console.log('Form data updated: ', JSON.stringify(this.value()));
             } else {
                 console.log('File or size missing in response');
