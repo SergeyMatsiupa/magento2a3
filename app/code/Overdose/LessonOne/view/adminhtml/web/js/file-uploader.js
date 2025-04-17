@@ -52,25 +52,29 @@ define([
          */
         onFileUploaded: function (event, data) {
             console.log('File uploaded event triggered');
-            console.log('Raw data received: ', data);
+            console.log('Raw data received: ', JSON.stringify(data));
 
-            if (data.error) {
+            // Check if the response has an error
+            if (data.error === true) {
                 console.log('Error in response: ', data.message);
                 this.notifyError(data.message || $t('File upload failed.'));
                 return;
             }
 
+            // Check if the response has the required fields
             if (data.file && data.size) {
                 console.log('File and size present in response');
                 this.notifySuccess($t('File uploaded successfully: ') + data.file);
+
                 // Update form data with file information
-                this.value({
+                const fileData = {
+                    name: data.name || data.file,
                     file: data.file,
                     size: data.size,
                     url: data.url || '',
-                    name: data.name || data.file,
                     type: data.type || 'application/octet-stream'
-                });
+                };
+                this.value([fileData]); // fileUploader expects an array
                 console.log('Form data updated: ', this.value());
             } else {
                 console.log('File or size missing in response');
