@@ -3,7 +3,7 @@ define([
     'Magento_Ui/js/form/element/file-uploader',
     'mage/translate',
     'mage/url',
-    'Magento_Ui/js/modal/alert' // Используем для уведомлений
+    'Magento_Ui/js/modal/alert'
 ], function ($, FileUploader, $t, urlBuilder, alert) {
     'use strict';
 
@@ -31,6 +31,9 @@ define([
             this.on('fileUploaded', this.onFileUploaded.bind(this));
             this.on('fileUploadError', this.onFileUploadError.bind(this));
 
+            // Log uploaderConfig for debugging
+            console.log('Uploader config: ', JSON.stringify(this.uploaderConfig));
+
             return this;
         },
 
@@ -41,7 +44,7 @@ define([
          * @param {Object} data
          */
         onBeforeFileUpload: function (event, data) {
-            console.log('Before file upload: ', data);
+            console.log('Before file upload: ', JSON.stringify(data));
         },
 
         /**
@@ -55,7 +58,7 @@ define([
             console.log('Raw data received: ', JSON.stringify(data));
 
             // Check if the response has an error
-            if (data.error === true) {
+            if (data.error) {
                 console.log('Error in response: ', data.message);
                 this.notifyError(data.message || $t('File upload failed.'));
                 return;
@@ -71,11 +74,11 @@ define([
                     name: data.name || data.file,
                     file: data.file,
                     size: data.size,
-                    url: data.url || '',
+                    path: data.path || '', // Changed to path to match response
                     type: data.type || 'application/octet-stream'
                 };
                 this.value([fileData]); // fileUploader expects an array
-                console.log('Form data updated: ', this.value());
+                console.log('Form data updated: ', JSON.stringify(this.value()));
             } else {
                 console.log('File or size missing in response');
                 this.notifyError($t('File upload succeeded, but no file data returned.'));
@@ -89,7 +92,7 @@ define([
          * @param {Object} data
          */
         onFileUploadError: function (event, data) {
-            console.log('File upload error: ', data);
+            console.log('File upload error: ', JSON.stringify(data));
             var errorMessage = data.message || $t('File upload failed.');
             this.notifyError(errorMessage);
         },

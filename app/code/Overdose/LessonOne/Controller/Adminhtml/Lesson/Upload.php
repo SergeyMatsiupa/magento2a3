@@ -79,12 +79,11 @@ class Upload extends Action
             // Format response to match fileUploader expectations
             $response = [
                 'name' => $result['file'],
-                'size' => (int) $fileSize,
+                'size' => $fileSize,
                 'file' => $result['file'],
-                'url' => str_replace('\\', '/', $filePath),
+                'path' => str_replace('\\', '/', $filePath), // Changed 'url' to 'path' to match Magento's default fileUploader expectations
                 'type' => $uploader->getFileMimeType() ?? 'application/octet-stream',
-                'error' => false,
-                'message' => 'File uploaded successfully'
+                'error' => 0, // Changed to 0 to match fileUploader expectations
             ];
             $this->logger->debug('Upload successful. Response: ' . json_encode($response));
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
@@ -94,7 +93,8 @@ class Upload extends Action
             $this->logger->error('Upload error: ' . $e->getMessage());
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
             $resultJson->setData([
-                'error' => true,
+                'error' => 1, // Changed to 1 to match fileUploader expectations
+                'errorcode' => $e->getCode(),
                 'message' => $e->getMessage()
             ]);
             return $resultJson;
