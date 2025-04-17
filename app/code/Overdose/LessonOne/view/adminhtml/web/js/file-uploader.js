@@ -38,6 +38,7 @@ define([
          * @returns {String}
          */
         getUploadUrl: function () {
+            // Ensure correct admin URL
             return window.location.origin + '/admin/lessonone/lesson/upload';
         },
 
@@ -49,8 +50,18 @@ define([
          */
         onFileUploaded: function (event, data) {
             console.log('File uploaded: ', data);
-            if (data.result && data.result.file) {
+            if (data.result && data.result.file && data.result.size) {
                 this.notifySuccess($t('File uploaded successfully: ') + data.result.file);
+                // Update form data with file information
+                this.value({
+                    file: data.result.file,
+                    size: data.result.size,
+                    url: data.result.url,
+                    name: data.result.name,
+                    type: data.result.type,
+                    previewType: data.result.previewType,
+                    previewUrl: data.result.previewUrl
+                });
             } else {
                 this.notifyError($t('File upload succeeded, but no file data returned.'));
             }
