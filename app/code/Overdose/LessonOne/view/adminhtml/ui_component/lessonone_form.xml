@@ -75,6 +75,8 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="component" xsi:type="string">Overdose_LessonOne/js/file-uploader</item>
+                    <item name="allowedExtensions" xsi:type="string">csv xls traffic</item>
+                    <item name="maxFileSize" xsi:type="number">10485760</item> <!-- 10MB -->
                 </item>
             </argument>
             <settings>

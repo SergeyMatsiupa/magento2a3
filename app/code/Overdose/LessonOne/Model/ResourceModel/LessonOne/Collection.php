@@ -28,12 +28,6 @@ class Collection extends AbstractCollection
      */
     protected function _afterLoad()
     {
-        $items = $this->getItems();
-        $itemCount = count($items);
-        $this->logger->debug('Collection _afterLoad called with item count: ' . $itemCount);
-        foreach ($items as $item) {
-            $this->logger->debug('Collection item: ' . json_encode($item->getData()));
-        }
         return parent::_afterLoad();
     }
 }
