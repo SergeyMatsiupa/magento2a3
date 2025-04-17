@@ -50,15 +50,20 @@ class Upload extends Action
         $this->logger->debug('Upload.php: Request received. Parameters: ' . json_encode($this->getRequest()->getParams()));
         $this->logger->debug('Upload.php: Files received: ' . json_encode($_FILES));
         try {
+            if (!isset($_FILES['file'])) {
+                throw new \Exception('No file uploaded.');
+            }
             $this->logger->debug('Upload.php called with fileId: file');
             $uploader = $this->uploaderFactory->create(['fileId' => 'file']);
             $uploader->setAllowedExtensions(['csv', 'xls', 'traffic']);
             $uploader->setAllowRenameFiles(true);
             $destination = $this->_getFilePath();
+            $this->logger->debug('Destination path: ' . $destination);
             $result = $uploader->save($destination);
 
+            $this->logger->debug('Upload result: ' . json_encode($result));
             if (!$result || !isset($result['file']) || !isset($result['size'])) {
-                throw new \Exception('File upload failed or invalid result.');
+                throw new \Exception('File upload failed or invalid result: ' . json_encode($result));
             }
 
             // Normalize path for Windows compatibility

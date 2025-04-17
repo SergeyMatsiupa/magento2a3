@@ -78,6 +78,11 @@
                     <item name="allowedExtensions" xsi:type="string">csv xls traffic</item>
                     <item name="maxFileSize" xsi:type="number">10485760</item> <!-- 10MB -->
                     <item name="isMultipleFiles" xsi:type="boolean">false</item>
+                    <item name="uploaderConfig" xsi:type="array">
+                        <item name="url" xsi:type="url" path="lessonone/lesson/upload"/>
+                        <item name="fileKey" xsi:type="string">file</item>
+                        <item name="isAjax" xsi:type="boolean">true</item>
+                    </item>
                 </item>
             </argument>
             <settings>

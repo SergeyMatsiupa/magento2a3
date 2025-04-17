@@ -23,14 +23,25 @@ define([
             }
 
             // Set custom upload URL using Magento URL builder
-            this.uploaderConfig.url = urlBuilder.build('lessonone/lesson/upload');
+            this.uploaderConfig.url = this.uploaderConfig.url || urlBuilder.build('lessonone/lesson/upload');
             console.log('Upload URL set to: ' + this.uploaderConfig.url);
 
             // Add event listeners for upload events
             this.on('fileUploaded', this.onFileUploaded.bind(this));
             this.on('fileUploadError', this.onFileUploadError.bind(this));
+            this.on('beforeFileUpload', this.onBeforeFileUpload.bind(this));
 
             return this;
+        },
+
+        /**
+         * Handle before file upload
+         *
+         * @param {Object} event
+         * @param {Object} data
+         */
+        onBeforeFileUpload: function (event, data) {
+            console.log('Before file upload: ', data);
         },
 
         /**
@@ -54,6 +65,7 @@ define([
                     previewUrl: data.result.previewUrl
                 });
             } else {
+                console.log('No file data returned: ', data);
                 this.notifyError($t('File upload succeeded, but no file data returned.'));
             }
         },
