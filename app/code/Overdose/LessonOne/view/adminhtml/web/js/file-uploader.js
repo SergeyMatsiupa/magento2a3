@@ -1,8 +1,9 @@
 define([
     'jquery',
     'Magento_Ui/js/form/element/file-uploader',
-    'mage/translate'
-], function ($, FileUploader, $t) {
+    'mage/translate',
+    'mage/url'
+], function ($, FileUploader, $t, urlBuilder) {
     'use strict';
 
     return FileUploader.extend({
@@ -15,10 +16,14 @@ define([
             this._super();
 
             console.log('Custom file-uploader initialized');
-            console.log('Uploader Config:', this.uploaderConfig);
 
-            // Ensure uploaderConfig is applied
-            this.uploaderConfig.url = this.uploaderConfig.url || this.getUploadUrl();
+            // Ensure uploaderConfig is initialized
+            if (!this.uploaderConfig) {
+                this.uploaderConfig = {};
+            }
+
+            // Set custom upload URL using Magento URL builder
+            this.uploaderConfig.url = urlBuilder.build('lessonone/lesson/upload');
             console.log('Upload URL set to: ' + this.uploaderConfig.url);
 
             // Add event listeners for upload events
@@ -26,16 +31,6 @@ define([
             this.on('fileUploadError', this.onFileUploadError.bind(this));
 
             return this;
-        },
-
-        /**
-         * Get URL for file upload
-         *
-         * @returns {String}
-         */
-        getUploadUrl: function () {
-            // Ensure correct admin URL
-            return window.location.origin + '/admin/lessonone/lesson/upload';
         },
 
         /**
