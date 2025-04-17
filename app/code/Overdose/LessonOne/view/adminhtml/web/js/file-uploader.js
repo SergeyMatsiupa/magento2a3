@@ -1,0 +1,104 @@
+define([
+    'jquery',
+    'Magento_Ui/js/form/element/file-uploader',
+    'mage/translate'
+], function ($, FileUploader, $t) {
+    'use strict';
+
+    return FileUploader.extend({
+        /**
+         * Initialize component
+         *
+         * @returns {Object} Chainable
+         */
+        initialize: function () {
+            this._super();
+
+            console.log('Custom file-uploader initialized');
+
+            // Ensure uploaderConfig is initialized
+            if (!this.uploaderConfig) {
+                this.uploaderConfig = {};
+            }
+
+            // Set custom upload URL
+            this.uploaderConfig.url = this.getUploadUrl();
+            console.log('Upload URL set to: ' + this.uploaderConfig.url);
+
+            // Add event listeners for upload events
+            this.on('fileUploaded', this.onFileUploaded.bind(this));
+            this.on('fileUploadError', this.onFileUploadError.bind(this));
+
+            return this;
+        },
+
+        /**
+         * Get URL for file upload
+         *
+         * @returns {String}
+         */
+        getUploadUrl: function () {
+            return window.location.origin + '/admin/lessonone/lesson/upload';
+        },
+
+        /**
+         * Handle successful file upload
+         *
+         * @param {Object} event
+         * @param {Object} data
+         */
+        onFileUploaded: function (event, data) {
+            console.log('File uploaded: ', data);
+            if (data.result && data.result.file) {
+                this.notifySuccess($t('File uploaded successfully: ') + data.result.file);
+            } else {
+                this.notifyError($t('File upload succeeded, but no file data returned.'));
+            }
+        },
+
+        /**
+         * Handle file upload error
+         *
+         * @param {Object} event
+         * @param {Object} data
+         */
+        onFileUploadError: function (event, data) {
+            console.log('File upload error: ', data);
+            var errorMessage = data.error || $t('File upload failed.');
+            this.notifyError(errorMessage);
+        },
+
+        /**
+         * Show success notification
+         *
+         * @param {String} message
+         */
+        notifySuccess: function (message) {
+            this.addMessage('success', message);
+        },
+
+        /**
+         * Show error notification
+         *
+         * @param {String} message
+         */
+        notifyError: function (message) {
+            this.addMessage('error', message);
+        },
+
+        /**
+         * Add message to the notification area
+         *
+         * @param {String} type
+         * @param {String} message
+         */
+        addMessage: function (type, message) {
+            require(['Magento_Ui/js/lib/notification'], function (notification) {
+                notification().add({
+                    message: message,
+                    messageType: type
+                });
+            });
+        }
+    });
+});
