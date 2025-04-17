@@ -7,6 +7,8 @@ define([
 ], function ($, FileUploader, $t, urlBuilder, alert) {
     'use strict';
 
+    console.log('file-uploader.js: Script loaded'); // Отладка загрузки скрипта
+
     return FileUploader.extend({
         /**
          * Initialize component

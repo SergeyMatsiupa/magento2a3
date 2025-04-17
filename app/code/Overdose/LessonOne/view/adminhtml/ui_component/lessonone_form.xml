@@ -2,37 +2,27 @@
 <form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">lessonone_form.lessonone_form_data_source</item>
-            <item name="namespace" xsi:type="string">lessonone_form</item>
-            <item name="requestConfig" xsi:type="array">
-                <item name="url" xsi:type="url" path="mui/index/render"/>
-                <item name="params" xsi:type="array">
-                    <item name="namespace" xsi:type="string">lessonone_form</item>
-                </item>
-            </item>
+            <item name="provider" xsi:type="string">lesson_form.lesson_form_data_source</item>
+            <item name="deps" xsi:type="string">lesson_form.lesson_form_data_source</item>
+            <item name="namespace" xsi:type="string">lesson_form</item>
         </item>
         <item name="label" xsi:type="string" translate="true">Lesson Information</item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
-        <item name="config" xsi:type="array">
-            <item name="dataScope" xsi:type="string">data</item>
-        </item>
     </argument>
     <settings>
         <buttons>
-            <button name="back" class="Overdose\LessonOne\Block\Adminhtml\Lesson\Edit\BackButton"/>
             <button name="save" class="Overdose\LessonOne\Block\Adminhtml\Lesson\Edit\SaveButton"/>
+            <button name="back" class="Overdose\LessonOne\Block\Adminhtml\Lesson\Edit\BackButton"/>
         </buttons>
+        <layout>
+            <navContainerName>left</navContainerName>
+            <type>tabs</type>
+        </layout>
         <deps>
-            <dep>lessonone_form.lessonone_form_data_source</dep>
+            <dep>lesson_form.lesson_form_data_source</dep>
         </deps>
     </settings>
-    <dataSource name="lessonone_form_data_source">
-        <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">Overdose\LessonOne\Model\DataProvider</argument>
-            <argument name="name" xsi:type="string">lessonone_form_data_source</argument>
-            <argument name="primaryFieldName" xsi:type="string">lesson_id</argument>
-            <argument name="requestFieldName" xsi:type="string">lesson_id</argument>
-        </argument>
+    <dataSource name="lesson_form_data_source">
         <argument name="data" xsi:type="array">
             <item name="js_config" xsi:type="array">
                 <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
@@ -41,31 +31,51 @@
         <settings>
             <submitUrl path="lessonone/lesson/save"/>
         </settings>
+        <dataProvider class="Overdose\LessonOne\Model\Lesson\DataProvider" name="lesson_form_data_source">
+            <settings>
+                <requestFieldName>lesson_id</requestFieldName>
+                <primaryFieldName>lesson_id</primaryFieldName>
+            </settings>
+        </dataProvider>
     </dataSource>
     <fieldset name="general">
         <settings>
-            <label translate="true">Lesson Information</label>
+            <label translate="true">General</label>
         </settings>
         <field name="lesson_id" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">lesson</item>
+                </item>
+            </argument>
             <settings>
                 <dataType>text</dataType>
-                <label translate="true">ID</label>
                 <visible>false</visible>
             </settings>
         </field>
         <field name="title" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">lesson</item>
+                </item>
+            </argument>
             <settings>
-                <dataType>text</dataType>
                 <label translate="true">Title</label>
+                <dataType>text</dataType>
                 <validation>
                     <rule name="required-entry" xsi:type="boolean">true</rule>
                 </validation>
             </settings>
         </field>
         <field name="content" formElement="textarea">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">lesson</item>
+                </item>
+            </argument>
             <settings>
-                <dataType>text</dataType>
                 <label translate="true">Content</label>
+                <dataType>text</dataType>
                 <validation>
                     <rule name="required-entry" xsi:type="boolean">true</rule>
                 </validation>
@@ -74,21 +84,19 @@
         <field name="file" formElement="fileUploader">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="component" xsi:type="string">Overdose_LessonOne/js/file-uploader</item>
-                    <item name="allowedExtensions" xsi:type="string">csv xls traffic</item>
-                    <item name="maxFileSize" xsi:type="number">10485760</item> <!-- 10MB -->
-                    <item name="isMultipleFiles" xsi:type="boolean">false</item>
-                    <item name="uploaderConfig" xsi:type="array">
-                        <item name="url" xsi:type="url" path="lessonone/lesson/upload"/>
-                        <item name="fileKey" xsi:type="string">file</item>
-                        <item name="isAjax" xsi:type="boolean">true</item>
-                    </item>
+                    <item name="source" xsi:type="string">lesson</item>
                 </item>
             </argument>
             <settings>
-                <dataType>file</dataType>
-                <label translate="true">Upload File</label>
+                <label translate="true">File</label>
                 <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
+                <previewTmpl>ui/form/element/uploader/preview</previewTmpl>
+                <component>Overdose_LessonOne/js/file-uploader</component> <!-- Указываем наш кастомный JS -->
+                <uploaderConfig>
+                    <param name="url" xsi:type="url" path="lessonone/lesson/upload"/>
+                    <param name="allowedExtensions" xsi:type="string">csv xls traffic</param>
+                </uploaderConfig>
+                <allowedExtensions>csv xls traffic</allowedExtensions>
             </settings>
         </field>
     </fieldset>
