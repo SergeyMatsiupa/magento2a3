@@ -27,9 +27,9 @@ define([
             console.log('Upload URL set to: ' + this.uploaderConfig.url);
 
             // Add event listeners for upload events
+            this.on('beforeFileUpload', this.onBeforeFileUpload.bind(this));
             this.on('fileUploaded', this.onFileUploaded.bind(this));
             this.on('fileUploadError', this.onFileUploadError.bind(this));
-            this.on('beforeFileUpload', this.onBeforeFileUpload.bind(this));
 
             return this;
         },
@@ -51,22 +51,32 @@ define([
          * @param {Object} data
          */
         onFileUploaded: function (event, data) {
-            console.log('File uploaded: ', data);
-            if (data.result && data.result.file && data.result.size) {
-                this.notifySuccess($t('File uploaded successfully: ') + data.result.file);
-                // Update form data with file information
-                this.value({
-                    file: data.result.file,
-                    size: data.result.size,
-                    url: data.result.url,
-                    name: data.result.name,
-                    type: data.result.type,
-                    previewType: data.result.previewType,
-                    previewUrl: data.result.previewUrl
-                });
+            console.log('File uploaded event triggered');
+            console.log('Raw data received: ', data);
+
+            if (data.result) {
+                console.log('Result field present: ', data.result);
+                if (data.result.file && data.result.size) {
+                    console.log('File and size present in result');
+                    this.notifySuccess($t('File uploaded successfully: ') + data.result.file);
+                    // Update form data with file information
+                    this.value({
+                        file: data.result.file,
+                        size: data.result.size,
+                        url: data.result.url || '',
+                        name: data.result.name || data.result.file,
+                        type: data.result.type || 'application/octet-stream',
+                        previewType: data.result.previewType || 'document',
+                        previewUrl: data.result.previewUrl || ''
+                    });
+                    console.log('Form data updated: ', this.value());
+                } else {
+                    console.log('File or size missing in result');
+                    this.notifyError($t('File upload succeeded, but no file data returned.'));
+                }
             } else {
-                console.log('No file data returned: ', data);
-                this.notifyError($t('File upload succeeded, but no file data returned.'));
+                console.log('Result field missing in response');
+                this.notifyError($t('Invalid response format: no result field.'));
             }
         },
 

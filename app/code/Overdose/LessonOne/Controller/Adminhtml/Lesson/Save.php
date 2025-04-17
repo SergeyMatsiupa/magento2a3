@@ -3,8 +3,10 @@
 namespace Overdose\LessonOne\Controller\Adminhtml\Lesson;
 
 use Magento\Backend\App\Action;
-use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\Controller\ResultFactory;
 use Overdose\LessonOne\Model\LessonOneFactory;
+use Overdose\LessonOne\Model\ResourceModel\LessonOne as LessonOneResource;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -12,12 +14,16 @@ use Psr\Log\LoggerInterface;
  *
  * Controller for saving lesson data
  */
-class Save extends Action
+class Save extends Action implements HttpPostActionInterface
 {
     /**
      * @var LessonOneFactory
      */
     protected $lessonOneFactory;
+    /**
+     * @var LessonOneResource
+     */
+    protected $lessonOneResource;
 
     /**
      * @var LoggerInterface
@@ -27,13 +33,15 @@ class Save extends Action
     /**
      * Constructor
      *
-     * @param Context $context
+     * @param \Magento\Backend\App\Action\Context $context
      * @param LessonOneFactory $lessonOneFactory
+     * @param LessonOneResource $lessonOneResource
      * @param LoggerInterface $logger
      */
     public function __construct(
-        Context $context,
+        \Magento\Backend\App\Action\Context $context,
         LessonOneFactory $lessonOneFactory,
+        LessonOneResource $lessonOneResource,
         LoggerInterface $logger
     ) {
         // Call parent constructor to initialize the context
@@ -44,7 +52,7 @@ class Save extends Action
     }
 
     /**
-     * Execute action to save lesson data
+     * Execute save action
      *
      * @return \Magento\Framework\Controller\Result\Redirect
      */
@@ -52,50 +60,39 @@ class Save extends Action
     {
         // Get the request data (POST parameters)
         $data = $this->getRequest()->getPostValue();
-        // Create a redirect result object
-        $resultRedirect = $this->resultRedirectFactory->create();
-
-        try {
-            // Log the incoming data for debugging
             $this->logger->debug('Save.php received data: ' . json_encode($data));
 
-            if (empty($data)) {
-                throw new \Exception('No data received to save.');
-            }
-            $model = $this->lessonOneFactory->create();
-
-            // Process file data from fileUploader response
-            if (isset($data['file']) && is_array($data['file']) && !empty($data['file'][0])) {
-                $fileData = $data['file'][0];
-                $data['file_name'] = $fileData['name'] ?? $fileData['file'] ?? null; // File name
-                $data['file_size'] = isset($fileData['size']) ? (int) $fileData['size'] : 0; // File size in bytes
-                $this->logger->debug('File data processed: ' . json_encode($fileData));
+        // Check for file data
+        $fileData = $this->getRequest()->getParam('file', []);
+        if (!empty($fileData) && is_array($fileData) && !empty($fileData[0])) {
+            $fileInfo = $fileData[0];
+            $data['file_name'] = $fileInfo['file'] ?? null;
+            $data['file_size'] = $fileInfo['size'] ?? null;
+            $this->logger->debug('File data received: ' . json_encode($fileInfo));
             } else {
-                unset($data['file']); // Remove file field if no file was uploaded
                 $this->logger->debug('No file data received.');
             }
 
-            // Remove form_key from data to avoid saving it in the database
-            if (isset($data['form_key'])) {
-                unset($data['form_key']);
-            }
-            // Set data to the model from POST request
-            $model->setData($data);
-            // Save the model to the database
-            $model->save();
-            // Add success message
+        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+
+        try {
+            $lesson = $this->lessonOneFactory->create();
+            $this->logger->debug('LessonOne save called with data: ' . json_encode($data));
+            $lesson->setData($data);
+
+            $this->logger->debug('ResourceModel LessonOne save called with data: ' . json_encode($lesson->getData()));
+            $this->lessonOneResource->save($lesson);
+
+            $this->logger->debug('Inserted new record with ID: ' . $lesson->getId());
+            $this->logger->debug('ResourceModel LessonOne saved with ID: ' . $lesson->getId());
+            $this->logger->debug('LessonOne saved successfully with ID: ' . $lesson->getId());
             $this->messageManager->addSuccessMessage(__('Lesson saved successfully.'));
-            // Set redirect path to the lesson index page
-            $resultRedirect->setPath('lessonone/lesson/index');
+            return $resultRedirect->setPath('*/*/index');
         } catch (\Exception $e) {
             $this->logger->error('Error saving lesson: ' . $e->getMessage());
-            $this->messageManager->addErrorMessage(__('Something went wrong while saving the lesson: %1', $e->getMessage()));
-            // Set redirect path back to the edit page
-            $resultRedirect->setPath('lessonone/lesson/edit');
+            $this->messageManager->addErrorMessage(__('Error saving lesson: %1', $e->getMessage()));
+            return $resultRedirect->setPath('*/*/edit', ['lesson_id' => $this->getRequest()->getParam('lesson_id')]);
         }
-
-        // Return the redirect result
-        return $resultRedirect;
     }
 
     /**

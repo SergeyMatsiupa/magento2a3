@@ -76,19 +76,16 @@ class Upload extends Action
             if ($fileSize === false) {
                 throw new \Exception('Failed to get file size.');
             }
-            // Format response for fileUploader and Save.php
+            // Format response to match fileUploader expectations
             $response = [
-                'name' => $result['file'],
-                'size' => (int) $fileSize, // Explicitly cast size to integer
-                'url' => str_replace('\\', '/', $filePath), // Normalize slashes for compatibility
-                'file' => $result['file'], // For Save.php
-                'path' => str_replace('\\', '/', $filePath), // For Save.php
-                'error' => 0,
-                'previewType' => 'document', // For compatibility with fileUploader
-                'previewUrl' => str_replace('\\', '/', $filePath), // For preview
-                'type' => $uploader->getFileMimeType() ?? 'application/octet-stream' // MIME type for preview
+                'file' => $result['file'], // Name of the uploaded file
+                'size' => (int) $fileSize, // File size in bytes
+                'name' => $result['file'], // File name for display
+                'url' => str_replace('\\', '/', $filePath), // File path (normalized)
+                'type' => $uploader->getFileMimeType() ?? 'application/octet-stream', // MIME type
+                'error' => 0 // No error
             ];
-            $this->logger->debug('Upload successful: ' . json_encode($response));
+            $this->logger->debug('Upload successful. Response: ' . json_encode($response));
             $resultJson = $this->resultFactory->create(ResultFactory::TYPE_JSON);
             $resultJson->setData($response);
             return $resultJson;
