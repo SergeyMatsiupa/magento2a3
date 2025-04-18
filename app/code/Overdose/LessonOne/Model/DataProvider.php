@@ -2,7 +2,7 @@
 
 namespace Overdose\LessonOne\Model;
 
-use Overdose\LessonOne\Model\ResourceModel\LessonOne\CollectionFactory;
+use Overdose\LessonOne\Model\ResourceModel\Lesson\CollectionFactory;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Ui\DataProvider\Modifier\PoolInterface;
 use Magento\Framework\App\RequestInterface;
@@ -29,7 +29,6 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
      * @param RequestInterface $request
      * @param array $meta
      * @param array $data
-     * 
      */
     public function __construct(
         $name,
@@ -48,6 +47,10 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         $this->request = $request;
         // Call parent constructor to initialize the data provider
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data, $pool);
+        // Debug log to confirm initialization
+        \Magento\Framework\App\ObjectManager::getInstance()
+            ->get(\Psr\Log\LoggerInterface::class)
+            ->debug('DataProvider initialized: ' . $name);
     }
 
     /**
