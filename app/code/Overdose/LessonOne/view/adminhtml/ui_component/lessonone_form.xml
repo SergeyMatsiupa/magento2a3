@@ -81,17 +81,16 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="source" xsi:type="string">lesson</item>
-                    <item name="component" xsi:type="string">Overdose_LessonOne/js/file-uploader</item>
-                    <item name="uploaderConfig" xsi:type="array">
-                        <item name="url" xsi:type="string">lessonone/lesson/upload</item>
-                        <item name="allowedExtensions" xsi:type="string">csv xls traffic</item>
-                    </item>
                 </item>
             </argument>
             <settings>
                 <label translate="true">File</label>
                 <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
-                <allowedExtensions>csv xls traffic</allowedExtensions>
+                <component>Overdose_LessonOne/js/file-uploader</component>
+                <uploaderConfig>
+                    <param name="url" xsi:type="url" path="lessonone/lesson/upload"/>
+                    <param name="allowedExtensions" xsi:type="string">csv xls traffic</param>
+                </uploaderConfig>
             </settings>
         </field>
     </fieldset>

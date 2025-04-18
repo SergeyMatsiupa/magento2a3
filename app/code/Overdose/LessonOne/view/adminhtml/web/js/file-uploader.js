@@ -1,139 +1,55 @@
 define([
     'jquery',
     'Magento_Ui/js/form/element/file-uploader',
-    'mage/translate',
-    'mage/url',
-    'Magento_Ui/js/modal/alert'
-], function ($, FileUploader, $t, urlBuilder, alert) {
+    'mage/translate'
+], function ($, FileUploader, $t) {
     'use strict';
 
-    console.log('file-uploader.js: Script loaded'); // Отладка загрузки скрипта
+    console.log('file-uploader.js: Script loaded');
 
     return FileUploader.extend({
-        /**
-         * Initialize component
-         *
-         * @returns {Object} Chainable
-         */
+        defaults: {
+            uploads: 0
+        },
+
         initialize: function () {
             this._super();
             console.log('Custom file-uploader initialized');
-
-            // Ensure uploaderConfig is initialized
-            if (!this.uploaderConfig) {
-                this.uploaderConfig = {};
-            }
-
-            // Set custom upload URL using Magento URL builder
-            this.uploaderConfig.url = this.uploaderConfig.url || urlBuilder.build('lessonone/lesson/upload');
-            console.log('Upload URL set to: ' + this.uploaderConfig.url);
-
-            // Add event listeners for upload events
-            this.on('beforeFileUpload', this.onBeforeFileUpload.bind(this));
-            this.on('fileUploaded', this.onFileUploaded.bind(this));
-            this.on('fileUploadError', this.onFileUploadError.bind(this));
-            this.on('upload', this.onUpload.bind(this));
-
-            // Log uploaderConfig and initial state
-            console.log('Uploader config: ', JSON.stringify(this.uploaderConfig));
-            console.log('Initial value: ', JSON.stringify(this.value()));
+            console.log('Upload URL set to: ', this.uploaderConfig.url);
+            console.log('Uploader config: ', this.uploaderConfig);
+            console.log('Initial value: ', this.value());
             console.log('Element name: ', this.name);
-
             return this;
         },
 
-        /**
-         * Handle before file upload
-         *
-         * @param {Object} event
-         * @param {Object} data
-         */
-        onBeforeFileUpload: function (event, data) {
-            console.log('Before file upload: ', JSON.stringify(data));
+        onBeforeFileUpload: function (e, data) {
+            console.log('Before file upload: ', data);
+            this._super(e, data);
+            return this;
         },
 
-        /**
-         * Debug upload event
-         *
-         * @param {Object} event
-         * @param {Object} data
-         */
-        onUpload: function (event, data) {
-            console.log('Upload event triggered: ', JSON.stringify(data));
+        onUpload: function (e, data) {
+            console.log('Upload event triggered: ', data);
+            this._super(e, data);
+            return this;
         },
 
-        /**
-         * Handle successful file upload
-         *
-         * @param {Object} event
-         * @param {Object} data
-         */
-        onFileUploaded: function (event, data) {
+        onFileUploaded: function (e, data) {
             console.log('File uploaded event triggered');
-            console.log('Raw data received: ', JSON.stringify(data));
-
-            // Check if the response has an error
-            if (data.error) {
-                console.log('Error in response: ', data.message);
-                this.notifyError(data.message || $t('File upload failed.'));
-                return;
-            }
-
-            // Check if the response has the required fields
-            if (data.file && data.size) {
-                console.log('File and size present in response');
-                this.notifySuccess($t('File uploaded successfully: ') + data.file);
-
-                // Update form data with file information
-                const fileData = {
-                    name: data.name || data.file,
-                    file: data.file,
-                    size: data.size,
-                    path: data.path || '',
-                    type: data.type || 'application/octet-stream'
+            console.log('Raw data received: ', data);
+            if (data.result && !data.result.error) {
+                var fileData = {
+                    name: data.result.name,
+                    size: data.result.size,
+                    url: data.result.url
                 };
+                console.log('Form data updated: ', fileData);
                 this.value([fileData]);
-                console.log('Form data updated: ', JSON.stringify(this.value()));
+                this.uploads++;
             } else {
-                console.log('File or size missing in response');
-                this.notifyError($t('File upload succeeded, but no file data returned.'));
+                console.error('Upload error: ', data.result.error);
             }
-        },
-
-        /**
-         * Handle file upload error
-         *
-         * @param {Object} event
-         * @param {Object} data
-         */
-        onFileUploadError: function (event, data) {
-            console.log('File upload error: ', JSON.stringify(data));
-            var errorMessage = data.message || $t('File upload failed.');
-            this.notifyError(errorMessage);
-        },
-
-        /**
-         * Show success notification
-         *
-         * @param {String} message
-         */
-        notifySuccess: function (message) {
-            alert({
-                title: $t('Success'),
-                content: message
-            });
-        },
-
-        /**
-         * Show error notification
-         *
-         * @param {String} message
-         */
-        notifyError: function (message) {
-            alert({
-                title: $t('Error'),
-                content: message
-            });
+            return this;
         }
     });
 });
