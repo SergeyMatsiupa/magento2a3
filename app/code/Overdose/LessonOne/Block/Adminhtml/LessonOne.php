@@ -4,9 +4,8 @@ namespace Overdose\LessonOne\Block\Adminhtml;
 
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
-use Overdose\LessonOne\Model\ResourceModel\LessonOne\CollectionFactory;
+use Overdose\LessonOne\Model\ResourceModel\Lesson\CollectionFactory;
 use Overdose\LessonOne\Model\Logger;  // Добавляем зависимость
-use Psr\Log\LoggerInterface; // Добавляем LoggerInterface для отладки
 
 /**
  * Class LessonOne
@@ -22,7 +21,7 @@ class LessonOne extends Template
     protected $collectionFactory;
 
     /**
-     * @var LoggerInterface
+     * @var \Overdose\LessonOne\Model\ResourceModel\LessonOne\Collection|null
      */
     protected $lessonCollection = null;  // Коллекция пока null
 
@@ -30,11 +29,6 @@ class LessonOne extends Template
      * @var Logger  // Новый сервис
      */
     protected $logger;
-
-    /**
-     * @var LoggerInterface // Добавляем для отладки
-     */
-    protected $_logger; // Добавляем поле для LoggerInterface
 
     /**
      * Constructor
@@ -46,11 +40,9 @@ class LessonOne extends Template
     public function __construct(
         Context $context,
         CollectionFactory $collectionFactory,
-        LoggerInterface $logger, // Добавляем LoggerInterface для отладки
         array $data = []
     ) {
         $this->collectionFactory = $collectionFactory;
-        $this->_logger = $logger; // Инициализируем LoggerInterface
         // Здесь коллекция НЕ создаётся, только фабрика передана
         // Call parent constructor to initialize the block
         parent::__construct($context, $data);
