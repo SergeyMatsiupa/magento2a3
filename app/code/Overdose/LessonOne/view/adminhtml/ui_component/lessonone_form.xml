@@ -49,48 +49,5 @@
                 <visible>false</visible>
             </settings>
         </field>
-        <field name="title" formElement="input">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">lesson</item>
-                </item>
-            </argument>
-            <settings>
-                <label translate="true">Title</label>
-                <dataType>text</dataType>
-                <validation>
-                    <rule name="required-entry" xsi:type="boolean">true</rule>
-                </validation>
-            </settings>
-        </field>
-        <field name="content" formElement="textarea">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">lesson</item>
-                </item>
-            </argument>
-            <settings>
-                <label translate="true">Content</label>
-                <dataType>text</dataType>
-                <validation>
-                    <rule name="required-entry" xsi:type="boolean">true</rule>
-                </validation>
-            </settings>
-        </field>
-        <!-- <field name="file" formElement="fileUploader">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="source" xsi:type="string">lesson</item>
-                    <item name="uploaderConfig" xsi:type="array">
-                        <item name="url" xsi:type="string">lessonone/lesson/upload</item>
-                        <item name="allowedExtensions" xsi:type="string">csv xls traffic</item>
-                    </item>
-                </item>
-            </argument>
-            <settings>
-                <label translate="true">File</label>
-                <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
-            </settings>
-        </field> -->
     </fieldset>
 </form>
