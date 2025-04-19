@@ -77,7 +77,7 @@
                 </validation>
             </settings>
         </field>
-        <field name="file" formElement="fileUploader">
+        <!-- <field name="file" formElement="fileUploader">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="source" xsi:type="string">lesson</item>
@@ -91,6 +91,6 @@
                 <label translate="true">File</label>
                 <elementTmpl>ui/form/element/uploader/uploader</elementTmpl>
             </settings>
-        </field>
+        </field> -->
     </fieldset>
 </form>
