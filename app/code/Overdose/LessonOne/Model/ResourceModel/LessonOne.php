@@ -63,7 +63,8 @@ class LessonOne extends AbstractDb
                 'title' => $data['title'] ?? '',
                 'content' => $data['content'] ?? '',
                 'file_name' => $data['file_name'] ?? null,
-                'file_size' => $data['file_size'] ?? null
+                'file_size' => $data['file_size'] ?? null,
+                'file' => $data['file'] ?? null
             ];
 
             if (!$object->getId()) {

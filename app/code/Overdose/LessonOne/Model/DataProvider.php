@@ -75,7 +75,18 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         if ($lessonId) {
             $lesson = $this->collection->getItemById($lessonId);
             if ($lesson && $lesson->getId()) {
-                $this->loadedData['data'] = $lesson->getData();
+                $data = $lesson->getData();
+                if (isset($data['file']) && $data['file']) {
+                    $data['file'] = [
+                        [
+                            'name' => $data['file_name'] ?? basename($data['file']),
+                            'url' => $data['file'],
+                            'size' => $data['file_size'] ?? 0,
+                            'type' => 'file'
+                        ]
+                    ];
+                }
+                $this->loadedData['data'] = $data;
             } else {
                 // If the lesson is not found, initialize an empty record
                 $this->loadedData['data'] = [
@@ -92,7 +103,18 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         if (!empty($data)) {
             $item = $this->collection->getNewEmptyItem();
             $item->setData($data);
-            $this->loadedData['data'] = $item->getData();
+            $persistedData = $item->getData();
+            if (isset($persistedData['file']) && is_array($persistedData['file'])) {
+                $persistedData['file'] = [
+                    [
+                        'name' => $persistedData['file_name'] ?? '',
+                        'url' => $persistedData['file'] ?? '',
+                        'size' => $persistedData['file_size'] ?? 0,
+                        'type' => 'file'
+                    ]
+                ];
+            }
+            $this->loadedData['data'] = $persistedData;
             $this->dataPersistor->clear('lessonone');
         }
 

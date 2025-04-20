@@ -50,7 +50,7 @@ class Edit extends Action
 
         // Get lesson_id from request
         $id = $this->getRequest()->getParam('lesson_id');
-        $model = $this->_objectManager->create(\Overdose\LessonOne\Model\Lesson::class);
+        $model = $this->_objectManager->create(\Overdose\LessonOne\Model\LessonOne::class);
 
         // Load existing lesson if ID is provided
         if ($id) {
