@@ -22,6 +22,7 @@
         <deps>
             <dep>lesson_form.lesson_form_data_source</dep>
         </deps>
+        <dataScope>data</dataScope>
     </settings>
     <dataSource name="lesson_form_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
@@ -29,6 +30,11 @@
             <argument name="name" xsi:type="string">lesson_form_data_source</argument>
             <argument name="primaryFieldName" xsi:type="string">lesson_id</argument>
             <argument name="requestFieldName" xsi:type="string">lesson_id</argument>
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="submit_url" xsi:type="url" path="lessonone/lesson/save"/>
+                </item>
+            </argument>
         </argument>
         <argument name="data" xsi:type="array">
             <item name="js_config" xsi:type="array">
@@ -49,6 +55,7 @@
                     <item name="formElement" xsi:type="string">input</item>
                     <item name="source" xsi:type="string">lesson</item>
                     <item name="visible" xsi:type="boolean">false</item>
+                    <item name="dataScope" xsi:type="string">lesson_id</item>
                 </item>
             </argument>
         </field>
@@ -59,6 +66,7 @@
                     <item name="label" xsi:type="string" translate="true">Title</item>
                     <item name="formElement" xsi:type="string">input</item>
                     <item name="source" xsi:type="string">lesson</item>
+                    <item name="dataScope" xsi:type="string">title</item>
                     <item name="validation" xsi:type="array">
                         <item name="required-entry" xsi:type="boolean">true</item>
                     </item>
@@ -72,6 +80,7 @@
                     <item name="label" xsi:type="string" translate="true">Content</item>
                     <item name="formElement" xsi:type="string">textarea</item>
                     <item name="source" xsi:type="string">lesson</item>
+                    <item name="dataScope" xsi:type="string">content</item>
                     <item name="validation" xsi:type="array">
                         <item name="required-entry" xsi:type="boolean">true</item>
                     </item>
@@ -85,6 +94,7 @@
                     <item name="label" xsi:type="string" translate="true">File</item>
                     <item name="formElement" xsi:type="string">fileUploader</item>
                     <item name="source" xsi:type="string">lesson</item>
+                    <item name="dataScope" xsi:type="string">file</item>
                     <item name="elementTmpl" xsi:type="string">ui/form/element/uploader/uploader</item>
                     <item name="uploaderConfig" xsi:type="array">
                         <item name="url" xsi:type="url" path="lessonone/lesson/upload"/>
