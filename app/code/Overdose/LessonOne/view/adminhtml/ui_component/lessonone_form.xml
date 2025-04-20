@@ -13,7 +13,7 @@
         </item>
     </argument>
     <settings>
-        <spinner>lessonone_form</spinner>
+        <spinner>general</spinner>
         <deps>
             <dep>lesson_form.lesson_form_data_source</dep>
         </deps>
