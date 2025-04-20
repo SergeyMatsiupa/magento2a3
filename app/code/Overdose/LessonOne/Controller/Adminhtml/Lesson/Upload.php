@@ -2,8 +2,11 @@
 namespace Overdose\LessonOne\Controller\Adminhtml\Lesson;
 
 use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\File\UploaderFactory;
+use Magento\Framework\Filesystem;
+use Magento\MediaStorage\Model\File\UploaderFactory;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -11,7 +14,7 @@ use Psr\Log\LoggerInterface;
  *
  * Controller for handling file uploads
  */
-class Upload extends Action
+class Upload extends Action implements HttpPostActionInterface
 {
     /**
      * @var UploaderFactory
@@ -22,22 +25,29 @@ class Upload extends Action
      * @var LoggerInterface
      */
     protected $logger;
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
 
     /**
      * Constructor
      *
-     * @param \Magento\Backend\App\Action\Context $context
+     * @param Context $context
      * @param UploaderFactory $uploaderFactory
      * @param LoggerInterface $logger
+     * @param Filesystem $filesystem
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
+        Context $context,
         UploaderFactory $uploaderFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        Filesystem $filesystem
     ) {
         parent::__construct($context);
         $this->uploaderFactory = $uploaderFactory;
         $this->logger = $logger;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -57,6 +67,7 @@ class Upload extends Action
             $uploader = $this->uploaderFactory->create(['fileId' => 'file']);
             $uploader->setAllowedExtensions(['csv', 'xls', 'traffic']);
             $uploader->setAllowRenameFiles(true);
+            $uploader->setFilesDispersion(false);
             $destination = $this->_getFilePath();
             $this->logger->debug('Destination path: ' . $destination);
             $result = $uploader->save($destination);
@@ -81,7 +92,8 @@ class Upload extends Action
                 'name' => $result['file'],
                 'size' => $fileSize,
                 'file' => $result['file'],
-                'path' => str_replace('\\', '/', $filePath), // Changed 'url' to 'path' to match Magento's default fileUploader expectations
+                'path' => str_replace('\\', '/', $filePath),
+                'url' => $this->_getMediaUrl('lessonone/files/' . $result['file']),
                 'type' => $uploader->getFileMimeType() ?? 'application/octet-stream',
                 'error' => 0, // Changed to 0 to match fileUploader expectations
             ];
@@ -108,13 +120,23 @@ class Upload extends Action
      */
     protected function _getFilePath()
     {
-        $directory = $this->_objectManager->get(\Magento\Framework\Filesystem::class)
-            ->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR);
+        $directory = $this->filesystem->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);
         $path = $directory->getAbsolutePath('lessonone/files');
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
         }
         return $path;
+    }
+
+    /**
+     * Get media URL for the file
+     *
+     * @param string $filePath
+     * @return string
+     */
+    protected function _getMediaUrl($filePath)
+    {
+        return $this->_urlBuilder->getBaseUrl(['_type' => \Magento\Framework\UrlInterface::URL_TYPE_MEDIA]) . $filePath;
     }
 
     /**

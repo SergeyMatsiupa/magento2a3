@@ -8,74 +8,87 @@
         </item>
         <item name="label" xsi:type="string" translate="true">Lesson Information</item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="layout" xsi:type="string">default</item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="string">Overdose\LessonOne\Block\Adminhtml\Lesson\BackButton</item>
+            <item name="save" xsi:type="string">Overdose\LessonOne\Block\Adminhtml\Lesson\SaveButton</item>
+        </item>
     </argument>
     <settings>
-        <buttons>
-            <button name="save" class="Overdose\LessonOne\Block\Adminhtml\Lesson\Edit\SaveButton"/>
-            <button name="back" class="Overdose\LessonOne\Block\Adminhtml\Lesson\Edit\BackButton"/>
-        </buttons>
+        <spinner>lessonone_form</spinner>
         <deps>
             <dep>lesson_form.lesson_form_data_source</dep>
         </deps>
     </settings>
     <dataSource name="lesson_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Overdose\LessonOne\Model\DataProvider</argument>
+            <argument name="name" xsi:type="string">lesson_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">lesson_id</argument>
+            <argument name="requestFieldName" xsi:type="string">lesson_id</argument>
+        </argument>
         <argument name="data" xsi:type="array">
             <item name="js_config" xsi:type="array">
                 <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
             </item>
         </argument>
-        <settings>
-            <submitUrl path="lessonone/lesson/save"/>
-        </settings>
-        <dataProvider class="Overdose\LessonOne\Model\DataProvider" name="lesson_form_data_source">
-            <settings>
-                <requestFieldName>lesson_id</requestFieldName>
-                <primaryFieldName>lesson_id</primaryFieldName>
-            </settings>
-        </dataProvider>
     </dataSource>
     <fieldset name="general">
-        <settings>
-            <label translate="true">General</label>
-        </settings>
-        <field name="lesson_id" formElement="input">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">General</item>
+            </item>
+        </argument>
+        <field name="lesson_id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">input</item>
                     <item name="source" xsi:type="string">lesson</item>
+                    <item name="visible" xsi:type="boolean">false</item>
                 </item>
             </argument>
-            <settings>
-                <dataType>text</dataType>
-                <visible>false</visible>
-            </settings>
         </field>
-        <field name="title" formElement="input">
+        <field name="title">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Title</item>
+                    <item name="formElement" xsi:type="string">input</item>
                     <item name="source" xsi:type="string">lesson</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
                 </item>
             </argument>
-            <settings>
-                <label translate="true">Title</label>
-                <dataType>text</dataType>
-                <validation>
-                    <rule name="required-entry" xsi:type="boolean">true</rule>
-                </validation>
-            </settings>
         </field>
-        <field name="content" formElement="textarea">
+        <field name="content">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Content</item>
+                    <item name="formElement" xsi:type="string">textarea</item>
                     <item name="source" xsi:type="string">lesson</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
                 </item>
             </argument>
-            <settings>
-                <label translate="true">Content</label>
-                <dataType>text</dataType>
-                <validation>
-                    <rule name="required-entry" xsi:type="boolean">true</rule>
-                </validation>
-            </settings>
+        </field>
+        <field name="file">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">File</item>
+                    <item name="formElement" xsi:type="string">fileUploader</item>
+                    <item name="source" xsi:type="string">lesson</item>
+                    <item name="elementTmpl" xsi:type="string">ui/form/element/uploader/uploader</item>
+                    <item name="uploaderConfig" xsi:type="array">
+                        <item name="url" xsi:type="url" path="lessonone/lesson/upload"/>
+                    </item>
+                    <item name="allowedExtensions" xsi:type="string">csv xls traffic</item>
+                </item>
+            </argument>
         </field>
     </fieldset>
 </form>
