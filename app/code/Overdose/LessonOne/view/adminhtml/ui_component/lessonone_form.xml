@@ -27,7 +27,7 @@
         <settings>
             <submitUrl path="lessonone/lesson/save"/>
         </settings>
-        <dataProvider class="Overdose\LessonOne\Model\Lesson\DataProvider" name="lesson_form_data_source">
+        <dataProvider class="Overdose\LessonOne\Model\DataProvider" name="lesson_form_data_source">
             <settings>
                 <requestFieldName>lesson_id</requestFieldName>
                 <primaryFieldName>lesson_id</primaryFieldName>
