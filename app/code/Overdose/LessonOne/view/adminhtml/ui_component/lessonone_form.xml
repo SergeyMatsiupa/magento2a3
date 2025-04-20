@@ -8,8 +8,13 @@
         </item>
         <item name="label" xsi:type="string" translate="true">Lesson Information</item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
-        <item name="layout" xsi:type="string">default</item>
         <item name="buttons" xsi:type="array">
+            <item name="save" xsi:type="array">
+                <item name="name" xsi:type="string">save</item>
+                <item name="label" xsi:type="string" translate="true">Save</item>
+                <item name="class" xsi:type="string">primary</item>
+                <item name="url" xsi:type="string">*/*/save</item>
+            </item>
         </item>
     </argument>
     <settings>
