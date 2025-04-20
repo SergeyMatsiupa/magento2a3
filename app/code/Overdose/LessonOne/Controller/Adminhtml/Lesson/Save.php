@@ -3,10 +3,10 @@
 namespace Overdose\LessonOne\Controller\Adminhtml\Lesson;
 
 use Magento\Backend\App\Action;
-use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\Controller\ResultFactory;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Request\DataPersistorInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Overdose\LessonOne\Model\LessonOneFactory;
-use Overdose\LessonOne\Model\ResourceModel\LessonOne as LessonOneResource;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -14,16 +14,17 @@ use Psr\Log\LoggerInterface;
  *
  * Controller for saving lesson data
  */
-class Save extends Action implements HttpPostActionInterface
+class Save extends Action
 {
+    /**
+     * @var DataPersistorInterface
+     */
+    protected $dataPersistor;
+
     /**
      * @var LessonOneFactory
      */
     protected $lessonOneFactory;
-    /**
-     * @var LessonOneResource
-     */
-    protected $lessonOneResource;
 
     /**
      * @var LoggerInterface
@@ -31,81 +32,82 @@ class Save extends Action implements HttpPostActionInterface
     protected $logger;
 
     /**
-     * Constructor
-     *
-     * @param \Magento\Backend\App\Action\Context $context
+     * @param Context $context
+     * @param DataPersistorInterface $dataPersistor
      * @param LessonOneFactory $lessonOneFactory
-     * @param LessonOneResource $lessonOneResource
      * @param LoggerInterface $logger
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
+        Context $context,
+        DataPersistorInterface $dataPersistor,
         LessonOneFactory $lessonOneFactory,
-        LessonOneResource $lessonOneResource,
         LoggerInterface $logger
     ) {
-        // Call parent constructor to initialize the context
-        parent::__construct($context);
+        $this->dataPersistor = $dataPersistor;
         // Assign LessonOneFactory to class property
         $this->lessonOneFactory = $lessonOneFactory;
-        $this->lessonOneResource = $lessonOneResource;
         $this->logger = $logger;
+        // Call parent constructor to initialize the context
+        parent::__construct($context);
     }
 
     /**
-     * Execute save action
+     * Save action
      *
-     * @return \Magento\Framework\Controller\Result\Redirect
+     * @return \Magento\Framework\Controller\ResultInterface
      */
     public function execute()
     {
         // Get the request data (POST parameters)
+        $resultRedirect = $this->resultRedirectFactory->create();
         $data = $this->getRequest()->getPostValue();
-            $this->logger->debug('Save.php received data: ' . json_encode($data));
 
-        // Check for file data
-        $fileData = isset($data['file']) && is_array($data['file']) && !empty($data['file']) ? $data['file'] : [];
-        if (!empty($fileData)) {
-            $fileInfo = $fileData[0]; // fileUploader sends an array of files
-            $data['file_name'] = $fileInfo['file'] ?? null;
-            $data['file_size'] = $fileInfo['size'] ?? null;
-            $this->logger->debug('File data received: ' . json_encode($fileInfo));
-            } else {
-                $this->logger->debug('No file data received.');
+        $this->logger->debug('Save.php: Request data: ' . json_encode($data));
+
+        if ($data) {
+            try {
+                $model = $this->lessonOneFactory->create();
+                $id = $this->getRequest()->getParam('lesson_id');
+
+                if ($id) {
+                    $model->load($id);
+                    if (!$model->getId()) {
+                        $this->messageManager->addErrorMessage(__('This lesson no longer exists.'));
+                        return $resultRedirect->setPath('*/*/');
+                    }
+                }
+
+                // Обработка загруженного файла
+                if (isset($data['file']) && !empty($data['file'][0]['name'])) {
+                    $fileData = $data['file'][0];
+                    $data['file_name'] = $fileData['name'];
+                    $data['file_size'] = $fileData['size'];
+                    $data['file'] = $fileData['file']; // Путь к файлу
+                    $this->logger->debug('Save.php: File data processed: ' . json_encode($fileData));
+                } else {
+                    unset($data['file']);
+                    $this->logger->debug('Save.php: No file data provided.');
+                }
+
+                $model->setData($data);
+                $model->save();
+
+                $this->messageManager->addSuccessMessage(__('You saved the lesson.'));
+                $this->dataPersistor->clear('lessonone');
+
+                if ($this->getRequest()->getParam('back')) {
+                    return $resultRedirect->setPath('*/*/edit', ['lesson_id' => $model->getId()]);
+                }
+
+                return $resultRedirect->setPath('*/*/');
+            } catch (\Exception $e) {
+                $this->logger->error('Save.php: Error saving lesson: ' . $e->getMessage());
+                $this->messageManager->addErrorMessage($e->getMessage());
+                $this->dataPersistor->set('lessonone', $data);
+                return $resultRedirect->setPath('*/*/edit', ['lesson_id' => $id]);
             }
-
-        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-
-        try {
-            if (!$this->lessonOneResource) {
-                throw new \Exception('LessonOneResource is null.');
-            }
-            $lesson = $this->lessonOneFactory->create();
-            $this->logger->debug('LessonOne save called with data: ' . json_encode($data));
-            $lesson->setData($data);
-
-            $this->logger->debug('ResourceModel LessonOne save called with data: ' . json_encode($lesson->getData()));
-            $this->lessonOneResource->save($lesson);
-
-            $this->logger->debug('Inserted new record with ID: ' . $lesson->getId());
-            $this->logger->debug('ResourceModel LessonOne saved with ID: ' . $lesson->getId());
-            $this->logger->debug('LessonOne saved successfully with ID: ' . $lesson->getId());
-            $this->messageManager->addSuccessMessage(__('Lesson saved successfully.'));
-            return $resultRedirect->setPath('*/*/index');
-        } catch (\Exception $e) {
-            $this->logger->error('Error saving lesson: ' . $e->getMessage());
-            $this->messageManager->addErrorMessage(__('Error saving lesson: %1', $e->getMessage()));
-            return $resultRedirect->setPath('*/*/edit', ['lesson_id' => $this->getRequest()->getParam('lesson_id')]);
         }
-    }
 
-    /**
-     * Check if action is allowed
-     *
-     * @return bool
-     */
-    protected function _isAllowed()
-    {
-        return $this->_authorization->isAllowed('Overdose_LessonOne::lessonone_lesson');
+        return $resultRedirect->setPath('*/*/');
     }
 }
