@@ -5,6 +5,7 @@
             <item name="provider" xsi:type="string">lesson_form.lesson_form_data_source</item>
             <item name="deps" xsi:type="string">lesson_form.lesson_form_data_source</item>
             <item name="namespace" xsi:type="string">lesson_form</item>
+            <item name="component" xsi:type="string">Magento_Ui/js/form/form</item>
         </item>
         <item name="label" xsi:type="string" translate="true">Lesson Information</item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
