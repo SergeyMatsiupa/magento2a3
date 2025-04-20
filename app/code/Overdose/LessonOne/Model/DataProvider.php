@@ -29,6 +29,7 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
      * @param RequestInterface $request
      * @param array $meta
      * @param array $data
+     * @param PoolInterface|null $pool
      */
     public function __construct(
         $name,
@@ -67,17 +68,17 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         // Initialize $loadedData as an empty array
         $this->loadedData = [];
 
-        // Get the lesson_id from the request (e.g., from the URL parameter 'id')
+        // Get the lesson_id from the request (e.g., from the URL parameter 'lesson_id')
         $lessonId = $this->request->getParam($this->getRequestFieldName());
 
         // Load existing lesson if lesson_id is provided
         if ($lessonId) {
             $lesson = $this->collection->getItemById($lessonId);
             if ($lesson && $lesson->getId()) {
-                $this->loadedData[$lessonId] = $lesson->getData();
+                $this->loadedData['data'] = $lesson->getData();
             } else {
-                // If the lesson is not found, initialize an empty record with the given lesson_id
-                $this->loadedData[$lessonId] = [
+                // If the lesson is not found, initialize an empty record
+                $this->loadedData['data'] = [
                     'lesson_id' => $lessonId,
                     'title' => '',
                     'content' => '',
@@ -91,13 +92,13 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
         if (!empty($data)) {
             $item = $this->collection->getNewEmptyItem();
             $item->setData($data);
-            $this->loadedData[$item->getId()] = $item->getData();
+            $this->loadedData['data'] = $item->getData();
             $this->dataPersistor->clear('lessonone');
         }
 
-        // If no data is loaded (new lesson), provide an empty record with "0" as the key
+        // If no data is loaded (new lesson), provide an empty record
         if (empty($this->loadedData)) {
-            $this->loadedData['0'] = [
+            $this->loadedData['data'] = [
                 'lesson_id' => '',
                 'title' => '',
                 'content' => '',

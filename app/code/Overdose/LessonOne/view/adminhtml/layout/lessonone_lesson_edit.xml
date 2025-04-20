@@ -3,6 +3,7 @@
     <body>
         <referenceContainer name="content">
             <uiComponent name="lesson_form"/>
+            <block class="Magento\Framework\View\Element\Template" name="lesson_form_wrapper" template="Overdose_LessonOne::form.phtml"/>
         </referenceContainer>
     </body>
 </page>
