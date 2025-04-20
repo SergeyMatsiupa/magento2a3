@@ -95,9 +95,9 @@ class DataProvider extends \Magento\Ui\DataProvider\ModifierPoolDataProvider
             $this->dataPersistor->clear('lessonone');
         }
 
-        // If no data is loaded (new lesson), provide an empty record with null as the key
+        // If no data is loaded (new lesson), provide an empty record with "0" as the key
         if (empty($this->loadedData)) {
-            $this->loadedData[null] = [
+            $this->loadedData['0'] = [
                 'lesson_id' => '',
                 'title' => '',
                 'content' => '',
